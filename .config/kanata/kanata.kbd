@@ -1,0 +1,113 @@
+;; --- Kanata config file ---
+;; - System:                    Windows 11
+;; - Kanata:                    kanata_gui_cmd_allowed.exe Release v.1.9.0 (https://github.com/jtroo/kanata/releases)
+;; - OS Keyboard Layout:        US QWERTY
+;; - Physical Keyboard Layout:  Works with both ANSI (NA) and ISO (EU) layouts
+
+;; --- Functionalies ---
+;; - Set Colemak Layout
+
+;; - Set Homerow mods:
+;;      - a: left meta / left super / left Windows
+;;      - r: left alt
+;;      - s: left shift
+;;      - t: left ctl
+;;      - n: right ctl
+;;      - e: right shift
+;;      - i: right alt
+;;      - o: right meta / right super / right Windows
+
+;; - Allow use of german special characters ö, ä, ü, ß and their capitalized versions
+;;      - ö: lctl (t) + o       Ö: lctl (t) + lsft (s) + o
+;;      - ä: lctl (t) + '       Ä: lctl (t) + lsft (s) + '
+;;      - ü: lctl (t) + [       Ü: lctl (t) + lsft (s) + [
+;;      - ß: lctl (t) + ]
+
+
+(defcfg
+    process-unmapped-keys yes
+)
+
+;; The source is the default US QWERTY layout (not all keys specified)
+(defsrc
+                    q   w   e   r   t   y   u   i   o   p   [   ]
+    caps            a   s   d   f   g   h   j   k   l   ;   '
+    lsft            z   x   c   v   b   n   m                   rsft
+    lctl
+)
+
+;; Setting variables for Howerow mods timing
+(defvar
+    tap-time 300        ;; tap -> hold within this interval: character gets typed repeatedly until key-release. Allows for: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    hold-time 200       ;; key_down_time < hold-time -> tab behavior, key_down_time > hold-time -> hold behavior
+)
+
+;; Aliases for functions
+(defalias
+    ;; Definition Syntax:  name_of_alias (function)  
+    ;; Usage Syntax:       @name_of_alias
+
+    ;; Here the behavior of the homerow keys is changed using the tab-hold function. Tap -> Send normal character as always, Hold -> Act as modifier key
+    ;; TODO: Implement layer changing capabilities for the other homerow keys.
+    a (tap-hold $tap-time $hold-time a lmet)                                                ;; hold a -> left meta
+    r (tap-hold $tap-time $hold-time r lalt)                                                ;; hold r -> left alt
+
+    s (tap-hold $tap-time $hold-time s (multi lsft (layer-while-held sft-layer)))           ;; hold s -> lsft and shift-layer
+    cs (tap-hold $tap-time $hold-time s (multi lsft (layer-while-held ctl-sft-layer)))      ;; hold s (while in ctl-layer) -> lctl, lsft and ctl-sft-layer
+
+    t (tap-hold $tap-time $hold-time t (multi lctl (layer-while-held ctl-layer)))           ;; hold t -> lctl and control-layer
+    st (tap-hold $tap-time $hold-time t (multi lctl (layer-while-held ctl-sft-layer)))      ;; hold t (while in sft-layer) -> lctl, lsft and ctl-sft-layer
+
+    n (tap-hold $tap-time $hold-time n (multi rctl (layer-while-held ctl-layer)))           ;; hold n -> rctl and control-layer
+    e (tap-hold $tap-time $hold-time e rsft)                                                ;; hold e -> rsft
+    i (tap-hold $tap-time $hold-time i lalt)                                                ;; hold i -> ralt   TODO: find out if ralt is actually useful 
+    o (tap-hold $tap-time $hold-time o rmet)                                                ;; hold o -> rmet   TODO: find out if rmet is actually useful
+
+    ;; Definition of german special characters using unicode
+    ae (unicode ä)
+    AE (unicode Ä)
+    oe (unicode ö)
+    OE (unicode Ö)
+    ue (unicode ü)
+    UE (unicode Ü)
+    sss (unicode ß)
+
+    ;; Layer activations
+    control (multi lctl (layer-while-held ctl-layer))               ;; activates the ctl-layer while held and simultaneously sends lctl to keep default behavior (i.e. ctl + c)
+    shift   (multi lsft (layer-while-held sft-layer))               ;; activates the sft-layer while held and simultaneously sends lsft to keep default behavior (i.e. catitalization)
+    control-shift (multi lsft (layer-while-held ctl-sft-layer))     ;; activates the ctl-sft-layer while held and simultaneously sends lsft. Used to get from sft-layer to ctl-sft-layer
+    shift-control (multi lctl (layer-while-held ctl-sft-layer))     ;; activates the ctl-sft-layre while held and simultaneously sends lctl. Used to get from ctl-layre to ctl-sft-layer
+)
+
+;; Default layer, sets the Colemak layout, homerow tab-hold behavior and custom shift and control layers
+(deflayer base
+                    q   w   f   p   g   j   l   u   y   ;   [   ]
+    esc             @a  @r  @s  @t  d   h   @n  @e  @i  @o  _
+    @shift          z   x   c   v   b   k   m                   @shift
+    @control
+)
+
+;; Custom Control layer, active when ctl is held, gives access to lowercase german special characters
+;; Use this to define custom behavior of ctl + key combinations
+(deflayer ctl-layer
+                    _   _   _   _   _   _   _   _   _   _   @ue @sss
+    _               _   _   @cs _   _   _   _   _   _   @oe @ae
+    @control-shift  _   _   _   _   _   _   _                   _
+    _
+)
+
+;; Custom Shift layer, active when shift is held, currently only used to get to ctl-sft-layer when shift was pressed before ctl
+(deflayer sft-layer
+                    _   _   _   _   _   _   _   _   _   _   _   _
+    _               _   _   _   @st _   _   _   _   _   _   _
+    _               _   _   _   _   _   _   _                   _
+    @shift-control
+)
+
+;; Custon Control-Shift layer, active when ctl and shift are held, gives access to uppercase german special characters
+(deflayer ctl-sft-layer
+                    _   _   _   _   _   _   _   _   _   _   @UE _
+    _               _   _   _   _   _   _   _   _   _   @OE @AE
+    _               _   _   _   _   _   _   _                   _
+    _
+)
