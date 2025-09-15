@@ -30,7 +30,7 @@ config.integrated_title_button_style = "Gnome"
 -- or, changing the font size and color scheme.
 config.font = wezterm.font("JetBrains Mono", { weight = "Medium", italic = true })
 config.font_size = 12
-config.color_scheme = "Apple System Colors"
+config.color_scheme = "Tokyo Night"
 config.window_background_opacity = 1.0
 config.default_cursor_style = "BlinkingBar"
 
