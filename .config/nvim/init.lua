@@ -2,6 +2,7 @@
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 vim.g.have_nerd_font = true
+vim.g.termguicolors = true
 
 -- Line numbers
 vim.opt.number = true
@@ -43,13 +44,16 @@ vim.opt.undofile = true
 vim.opt.showmode = false
 vim.opt.inccommand = "split"
 vim.opt.cursorline = true
-vim.opt.winborder = "bold" -- border for flaoting windows and completion windows
+-- vim.opt.winborder = "bold" -- border for flaoting windows and completion windows
 
 -- Window Keymaps
 vim.keymap.set("n", "<C-h>", "<C-w><C-h>", { desc = "Move focus to the left window" })
 vim.keymap.set("n", "<C-l>", "<C-w><C-l>", { desc = "Move focus to the right window" })
 vim.keymap.set("n", "<C-j>", "<C-w><C-j>", { desc = "Move focus to the lower window" })
 vim.keymap.set("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus to the upper window" })
+
+-- File Explorer Keymaps
+vim.keymap.set("n", "<C-e>", "<cmd>Neotree<cr>")
 
 -- Highlight on yank
 vim.api.nvim_create_autocmd("TextYankPost", {
@@ -126,6 +130,18 @@ require("lazy").setup({
 		},
 	},
 
+	-- File Explorer
+	{
+		"nvim-neo-tree/neo-tree.nvim",
+		branch = "v3.x",
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+			"MunifTanjim/nui.nvim",
+			"nvim-tree/nvim-web-devicons", -- optional, but recommended
+		},
+		lazy = false, -- neo-tree will lazily load itself
+	},
+
 	-- Extra window for command line
 	{
 		"folke/noice.nvim",
@@ -142,6 +158,45 @@ require("lazy").setup({
 			"rcarriga/nvim-notify",
 		},
 	},
+
+    -- Trouble for diagnostics
+    {
+        "folke/trouble.nvim",
+        opts = {}, -- for default options, refer to the configuration section for custom setup.
+        cmd = "Trouble",
+        keys = {
+            {
+                "<leader>xx",
+                "<cmd>Trouble diagnostics toggle<cr>",
+                desc = "Diagnostics (Trouble)",
+            },
+            {
+                "<leader>xX",
+                "<cmd>Trouble diagnostics toggle filter.buf=0<cr>",
+                desc = "Buffer Diagnostics (Trouble)",
+            },
+            {
+                "<leader>cs",
+                "<cmd>Trouble symbols toggle focus=false<cr>",
+                desc = "Symbols (Trouble)",
+            },
+            {
+                "<leader>cl",
+                "<cmd>Trouble lsp toggle focus=false win.position=right<cr>",
+                desc = "LSP Definitions / references / ... (Trouble)",
+            },
+            {
+                "<leader>xL",
+                "<cmd>Trouble loclist toggle<cr>",
+                desc = "Location List (Trouble)",
+            },
+            {
+                "<leader>xQ",
+                "<cmd>Trouble qflist toggle<cr>",
+                desc = "Quickfix List (Trouble)",
+            },
+        },
+    },
 
 	-- Treesitter
 	{
@@ -389,6 +444,7 @@ require("lazy").setup({
 				basedpyright = {},
 				bashls = {},
 				marksman = {},
+				postgres_lsp = {},
 			}
 
 			local ensure_installed = vim.tbl_keys(servers or {})
