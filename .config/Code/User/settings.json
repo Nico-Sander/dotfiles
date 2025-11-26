@@ -1,0 +1,54 @@
+{
+    "editor.fontFamily": "'JetBrains Mono', 'Ubuntu Mono', monospace",
+    "git.autofetch": true,
+    "workbench.editor.empty.hint": "hidden",
+    "workbench.secondarySideBar.defaultVisibility": "hidden",
+    "todo-tree.general.tags": [
+        "BUG",
+        "HACK",
+        "FIXME",
+        "TODO",
+        "XXX",
+        "[ ]",
+        "[x]",
+        "NOTE"
+    ],
+    "security.workspace.trust.untrustedFiles": "open",
+    "cSpell.minWordLength": 3,
+    "cSpell.enabledSchemes": {
+        "gist": false,
+        "repo": false,
+        "sftp": false,
+        "untitled": false,
+        "vscode-notebook-cell": false,
+        "vscode-scm": false,
+        "vscode-userdata": false,
+        "vscode-vfs": false,
+        "vsls": false
+    },
+    "cSpell.userWords": [
+        "BLE",
+        "devkitc",
+        "env"
+    ],
+    "workbench.colorTheme": "Tokyo Night",
+    "editor.fontLigatures": true,
+    "editor.fontWeight": "500",
+    "github.copilot.enable": {
+        "*": false,
+        "plaintext": false,
+        "markdown": false,
+        "scminput": false,
+        "python": false
+    },
+    "inlineChat.lineNaturalLanguageHint": false,
+    "geminicodeassist.project": "stellar-lodge-nfg2z",
+    "geminicodeassist.inlineSuggestions.enableAuto": true,
+
+    "[latex]": {
+        "editor.wordWrap": "wordWrapColumn",
+        "editor.wordWrapColumn": 120
+    },
+    
+    "vim.useSystemClipboard": true,
+}
