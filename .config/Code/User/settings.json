@@ -47,8 +47,30 @@
 
     "[latex]": {
         "editor.wordWrap": "wordWrapColumn",
-        "editor.wordWrapColumn": 120
+        "editor.wordWrapColumn": 160
     },
+    "vim.normalModeKeyBindingsNonRecursive": [
+        {
+            "before": ["j"],
+            "after": ["g", "j"]
+        },
+        {
+            "before": ["k"],
+            "after": ["g", "k"]
+        }
+    ], 
+    "vim.visualModeKeyBindingsNonRecursive": [
+        {
+            "before": ["j"],
+            "after": ["g", "j"]
+        },
+        {
+            "before": ["k"],
+            "after": ["g", "k"]
+        }
+    ], 
     
     "vim.useSystemClipboard": true,
+    "editor.minimap.enabled": false,
+    "diffEditor.codeLens": true,
 }
