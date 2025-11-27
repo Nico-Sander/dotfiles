@@ -26,7 +26,8 @@ config.window_padding = {
 	bottom = 0,
 }
 
-config.use_fancy_tab_bar = true
+-- config.enable_tab_bar = true
+-- config.use_fancy_tab_bar = false
 
 -- local border_color = "#208fe9" -- yaru-blue
 --
@@ -43,13 +44,23 @@ config.use_fancy_tab_bar = true
 -- }
 
 config.enable_scroll_bar = false
-config.window_decorations = "TITLE | RESIZE"
-config.integrated_title_button_style = "Gnome"
+config.window_decorations = "RESIZE"
+-- config.integrated_title_button_style = "Gnome"
+
+config.window_padding = {
+	left = 5,
+	right = 5,
+	top = 5,
+	bot = 5,
+}
 
 -- or, changing the font size and color scheme.
-config.font = wezterm.font("JetBrains Mono", { weight = "Medium", italic = true })
+config.font = wezterm.font("CaskaydiaCove Nerd Font", { weight = "Medium", italic = false })
 config.font_size = 12
 config.color_scheme = "Tokyo Night"
+config.colors = {
+	background = "#101010",
+}
 config.window_background_opacity = 1.0
 config.default_cursor_style = "BlinkingBar"
 
