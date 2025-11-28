@@ -51,7 +51,7 @@ config.window_padding = {
 	left = 5,
 	right = 5,
 	top = 5,
-	bot = 5,
+	bottom = 5,
 }
 
 -- or, changing the font size and color scheme.
