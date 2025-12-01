@@ -59,7 +59,7 @@ config.font = wezterm.font("CaskaydiaCove Nerd Font", { weight = "Medium", itali
 config.font_size = 12
 config.color_scheme = "Tokyo Night"
 config.colors = {
-	background = "#101010",
+	background = "#111111",
 }
 config.window_background_opacity = 1.0
 config.default_cursor_style = "BlinkingBar"
