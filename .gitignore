@@ -1,1 +1,28 @@
-.config/tmux/plugins/
+# =========================================================================
+# VS Code / VSCodium
+# =========================================================================
+
+# 1. Ignore EVERYTHING inside the VS Code User directory
+.config/Code/User/*
+
+# 2. Un-ignore the essential config files
+!.config/Code/User/settings.jso# =========================================================================
+# VS Code / VSCodium
+# =========================================================================
+
+# 1. Ignore EVERYTHING inside the main Code directory (Cache, Cookies, etc.)
+.config/Code/*
+
+# 2. Force Git to still look inside the User folder
+!.config/Code/User/
+
+# 3. Ignore all the junk inside the User folder
+.config/Code/User/*
+
+# 4. Whitelist ONLY the specific config files you want to track
+!.config/Code/User/settings.json
+!.config/Code/User/keybindings.json
+
+# 5. (Optional) Whitelist the snippets folder and everything inside it
+!.config/Code/User/snippets/
+!.config/Code/User/snippets/*

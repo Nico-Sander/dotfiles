@@ -31,7 +31,6 @@
         "devkitc",
         "env"
     ],
-    "workbench.colorTheme": "Tokyo Night",
     "editor.fontLigatures": true,
     "editor.fontWeight": "500",
     "github.copilot.enable": {
@@ -46,7 +45,7 @@
     "geminicodeassist.inlineSuggestions.enableAuto": true,
 
     "[latex]": {
-        "editor.wordWrap": "wordWrapColumn",
+        "editor.wordWrap": "bounded",
         "editor.wordWrapColumn": 160
     },
     "vim.normalModeKeyBindingsNonRecursive": [
@@ -73,4 +72,9 @@
     "vim.useSystemClipboard": true,
     "editor.minimap.enabled": false,
     "diffEditor.codeLens": true,
+    "workbench.colorTheme": "Tokyo Night",
+    "editor.wordWrap": "on",
+    "editor.wrapOnEscapedLineFeeds": true,
+    "editor.wrappingStrategy": "advanced",
+    "editor.wordWrapColumn": 40,
 }
