@@ -26,3 +26,4 @@
 # 5. (Optional) Whitelist the snippets folder and everything inside it
 !.config/Code/User/snippets/
 !.config/Code/User/snippets/*
+.config/tmux/plugins/tpm
