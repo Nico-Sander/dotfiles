@@ -72,7 +72,6 @@
     "vim.useSystemClipboard": true,
     "editor.minimap.enabled": false,
     "diffEditor.codeLens": true,
-    "workbench.colorTheme": "Tokyo Night",
     "editor.wordWrap": "on",
     "editor.wrapOnEscapedLineFeeds": true,
     "editor.wrappingStrategy": "advanced",
@@ -80,4 +79,5 @@
     "chat.viewSessions.orientation": "stacked",
     "containers.containerClient": "com.microsoft.visualstudio.containers.docker",
     "containers.orchestratorClient": "com.microsoft.visualstudio.orchestrators.dockercompose",
+    "workbench.colorTheme": "Tokyo Night"
 }
