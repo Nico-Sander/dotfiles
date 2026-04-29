@@ -93,6 +93,19 @@ vim.keymap.set("n", "<leader>tv", function()
 	end
 end, { desc = "[T]oggle [V]irtual Text" })
 
+-- Configure SQL files: Disable diagnostics and enforce 4-space indentation
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = "sql",
+	callback = function(args)
+		-- 1. Disable annoying inline diagnostics
+		vim.diagnostic.enable(false, { bufnr = args.buf })
+
+		-- 2. Enforce 4 spaces for indentation
+		vim.bo[args.buf].expandtab = true -- Use spaces instead of tabs
+		vim.bo[args.buf].shiftwidth = 4 -- Size of an indent
+		vim.bo[args.buf].tabstop = 4 -- Number of spaces a <Tab> counts for
+	end,
+})
 -- Highlight on yank
 vim.api.nvim_create_autocmd("TextYankPost", {
 	desc = "Highlight when yanking (copying) text",
@@ -127,6 +140,25 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
 
+	-- Tmux integrations
+	{
+		"christoomey/vim-tmux-navigator",
+		cmd = {
+			"TmuxNavigateLeft",
+			"TmuxNavigateDown",
+			"TmuxNavigateUp",
+			"TmuxNavigateRight",
+			"TmuxNavigatePrevious",
+		},
+		keys = {
+			{ "<c-h>", "<cmd><C-U>TmuxNavigateLeft<cr>" },
+			{ "<c-j>", "<cmd><C-U>TmuxNavigateDown<cr>" },
+			{ "<c-k>", "<cmd><C-U>TmuxNavigateUp<cr>" },
+			{ "<c-l>", "<cmd><C-U>TmuxNavigateRight<cr>" },
+			{ "<c-\\>", "<cmd><C-U>TmuxNavigatePrevious<cr>" },
+		},
+	},
+
 	-- Treesitter
 	{
 		"nvim-treesitter/nvim-treesitter",
@@ -144,6 +176,13 @@ require("lazy").setup({
 				"query",
 				"vim",
 				"vimdoc",
+				"go",
+				"gomod",
+				"gosum",
+				"gotmpl",
+				"css",
+				"sql",
+				"python",
 			})
 
 			-- 2. Tell Neovim 0.11 to natively attach Treesitter to every file
@@ -473,10 +512,33 @@ require("lazy").setup({
 						},
 					},
 				},
+
+				go_pls = {},
+
+				html = { filetypes = { "html", "gotmpl" } },
+				htmx = { filetypes = { "html", "gotmpl" } },
+
+				tailwindcss = {
+					filetypes = { "html", "css", "gotmpl" },
+					init_options = {
+						userLanguages = {
+							gotmpl = "html",
+						},
+					},
+				},
 			}
 
 			require("mason-tool-installer").setup({
-				ensure_installed = { "lua_ls", "stylua" }, -- stylua is our formatter
+				ensure_installed = {
+					"lua_ls",
+					"stylua",
+					"gopls",
+					"goimports",
+					"tailwindcss-language-server",
+					"html-lsp",
+					"htmx-lsp",
+					"sql-formatter",
+				},
 			})
 
 			require("mason-lspconfig").setup({
@@ -517,7 +579,14 @@ require("lazy").setup({
 			},
 			formatters_by_ft = {
 				lua = { "stylua" },
+				go = { "goimports" },
+				sql = { "sql_formatter" },
 				-- Add more here later! e.g., python = { "isort", "black" }
+			},
+			formatters = {
+				sql_formatter = {
+					prepend_args = { "-l", "postgresql" },
+				},
 			},
 		},
 	},
@@ -539,7 +608,19 @@ require("lazy").setup({
 				nerd_font_variant = "mono",
 			},
 			sources = {
-				default = { "lsp", "path", "snippets", "buffer" },
+				default = { "lazydev", "lsp", "path", "snippets", "buffer", "dadbod" },
+				providers = {
+					lazydev = {
+						name = "LazyDev",
+						module = "lazydev.integrations.blink",
+						score_offset = 100,
+					},
+
+					dadbod = {
+						name = "Dadbod",
+						module = "vim_dadbod_completion.blink",
+					},
+				},
 			},
 			signature = { enabled = true },
 		},
@@ -554,6 +635,27 @@ require("lazy").setup({
 				{ path = "${3rd}/luv/library", words = { "vim%.uv" } },
 				"snacks.nvim", -- Teaches the LSP about the Snacks global!
 			},
+		},
+	},
+
+	-- =========================================================================
+	-- Database (Dadbod)
+	-- =========================================================================
+	{
+		"kristijanhusak/vim-dadbod-ui",
+		dependencies = {
+			{ "tpope/vim-dadbod", lazy = true },
+			{ "kristijanhusak/vim-dadbod-completion", ft = { "sql", "mysql", "plsql" }, lazy = true },
+		},
+		cmd = { "DBUI", "DBUIToggle", "DBUIAddConnection", "DBUIFindBuffer" },
+		init = function()
+			-- Tell Dadbod to use your modern Nerd Font icons
+			vim.g.db_ui_use_nerd_fonts = 1
+			-- Save database queries in a specific folder so they don't clutter your project
+			vim.g.db_ui_save_location = vim.fn.stdpath("config") .. "/require/db_ui"
+		end,
+		keys = {
+			{ "<leader>db", "<cmd>DBUIToggle<CR>", desc = "Toggle [D]ata[B]ase UI" },
 		},
 	},
 })

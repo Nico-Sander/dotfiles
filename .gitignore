@@ -6,7 +6,7 @@
 .config/Code/User/*
 
 # 2. Un-ignore the essential config files
-!.config/Code/User/settings.jso# =========================================================================
+!.config/Code/User/settings.json
 # VS Code / VSCodium
 # =========================================================================
 
@@ -26,4 +26,10 @@
 # 5. (Optional) Whitelist the snippets folder and everything inside it
 !.config/Code/User/snippets/
 !.config/Code/User/snippets/*
-.config/tmux/plugins/tpm
+
+# =========================================================================
+# TMUX
+# =========================================================================
+
+# Ignore tmux's plugins directory
+/.config/tmux/plugins/

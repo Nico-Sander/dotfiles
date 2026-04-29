@@ -77,4 +77,7 @@
     "editor.wrapOnEscapedLineFeeds": true,
     "editor.wrappingStrategy": "advanced",
     "editor.wordWrapColumn": 40,
+    "chat.viewSessions.orientation": "stacked",
+    "containers.containerClient": "com.microsoft.visualstudio.containers.docker",
+    "containers.orchestratorClient": "com.microsoft.visualstudio.orchestrators.dockercompose",
 }

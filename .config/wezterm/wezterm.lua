@@ -2,19 +2,19 @@
 local wezterm = require("wezterm")
 local mux = wezterm.mux
 
--- Initialize the configuration builder
-local config = wezterm.config_builder()
-
 -- ============================================================================
 -- Startup Events
 -- ============================================================================
 
 -- Maximize the window automatically when WezTerm starts
 wezterm.on("gui-startup", function(cmd)
-    local tab, pane, window = mux.spawn_window(cmd or {})
-    local gui_window = window:gui_window()
-    gui_window:maximize()
+	local _, _, window = mux.spawn_window(cmd or {})
+	local gui_window = window:gui_window()
+	gui_window:maximize()
 end)
+
+-- Initialize the configuration builder
+local config = wezterm.config_builder()
 
 -- ============================================================================
 -- Core & Performance Settings
@@ -40,10 +40,10 @@ config.window_decorations = "RESIZE"
 
 -- Uniform padding around the edges of the terminal
 config.window_padding = {
-    left = 5,
-    right = 5,
-    top = 5,
-    bottom = 5,
+	left = 5,
+	right = 5,
+	top = 5,
+	bottom = 5,
 }
 
 -- ============================================================================
@@ -56,7 +56,7 @@ config.color_scheme = "Tokyo Night"
 
 -- Custom color overrides
 config.colors = {
-    background = "#131313",
+	background = "#131313",
 }
 
 config.window_background_opacity = 1.0
