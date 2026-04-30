@@ -56,6 +56,27 @@ tmux kill-session -t bootstrap_session
 
 echo "   ✅ Plugins installed successfully."
 
+# 5. Check, Install, and Sync Kanata
+echo "🔍 Checking for Kanata..."
+if ! command -v kanata &> /dev/null; then
+    echo "   ⚙️ Kanata not found. Running full installation..."
+    echo "   ⚠️  This script requires elevated privileges to set up users and systemd."
+    
+    # We use 'bash' here just in case the executable bit (+x) got lost in Git
+    sudo bash "$HOME/.config/kanata/install_ubuntu.sh"
+else
+    echo "   ✅ Kanata is already installed."
+    echo "   🔄 Syncing kanata.kbd config to system directory..."
+    
+    # Copy the symlinked config from the home directory to the system directory
+    sudo cp "$HOME/.config/kanata/kanata.kbd" /etc/kanata/kanata-config.kbd
+    
+    # Restart the service to apply the new keymaps
+    sudo systemctl restart kanata.service
+    
+    echo "   ✅ Kanata service restarted with the latest config."
+fi
+
 echo "=========================================="
 echo " 🎉 Setup Complete! Your system is ready. "
 echo "=========================================="
