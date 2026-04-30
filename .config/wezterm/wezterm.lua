@@ -33,7 +33,7 @@ config.front_end = "WebGpu"
 
 config.initial_cols = 120
 config.initial_rows = 28
-config.enable_tab_bar = true
+config.enable_tab_bar = false -- Change this to enable the tab bar
 config.use_fancy_tab_bar = false
 config.enable_scroll_bar = true
 config.window_decorations = "RESIZE"
