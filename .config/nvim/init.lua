@@ -513,7 +513,7 @@ require("lazy").setup({
 					},
 				},
 
-				go_pls = {},
+				gopls = {},
 
 				html = { filetypes = { "html", "gotmpl" } },
 				htmx = { filetypes = { "html", "gotmpl" } },
@@ -526,6 +526,22 @@ require("lazy").setup({
 						},
 					},
 				},
+
+				-- Python
+				pyright = {
+					settings = {
+						python = {
+							analysis = {
+								typeCheckingMode = "basic", -- Change to "strict" if you want hard mode
+								autoSearchPaths = true,
+								useLibraryCodeForTypes = true,
+							},
+						},
+					},
+				},
+
+				-- Add Ruff for lightning-fast linting and formatting
+				ruff = {},
 			}
 
 			require("mason-tool-installer").setup({
@@ -538,6 +554,9 @@ require("lazy").setup({
 					"html-lsp",
 					"htmx-lsp",
 					"sql-formatter",
+					-- Python
+					"pyright",
+					"ruff",
 				},
 			})
 
@@ -581,7 +600,7 @@ require("lazy").setup({
 				lua = { "stylua" },
 				go = { "goimports" },
 				sql = { "sql_formatter" },
-				-- Add more here later! e.g., python = { "isort", "black" }
+				python = { "isort", "black" },
 			},
 			formatters = {
 				sql_formatter = {
