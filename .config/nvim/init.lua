@@ -233,7 +233,49 @@ require("lazy").setup({
 			require("mini.pairs").setup()
 			require("mini.icons").setup()
 			require("mini.statusline").setup()
+			require("mini.surround").setup({
+				mappings = {
+					add = "gza", -- Add surrounding in Normal and Visual modes
+					delete = "gzd", -- Delete surrounding
+					find = "gzf", -- Find surrounding (to the right)
+					find_left = "gzF", -- Find surrounding (to the left)
+					highlight = "gzh", -- Highlight surrounding
+					replace = "gzr", -- Replace surrounding
+					update_n_lines = "gzn", -- Update `n_lines`
+				},
+			})
 		end,
+	},
+
+	{
+		"folke/flash.nvim",
+		event = "VeryLazy",
+		---@type Flash.Config
+		opts = {
+			modes = {
+				search = {
+					enabled = true,
+				},
+			},
+		},
+		keys = {
+			{
+				"s",
+				mode = { "n", "x", "o" },
+				function()
+					require("flash").jump()
+				end,
+				desc = "Flash",
+			},
+			{
+				"S",
+				mode = { "n", "x", "o" },
+				function()
+					require("flash").treesitter()
+				end,
+				desc = "Flash Treesitter",
+			},
+		},
 	},
 
 	-- Snacks for a lot of functionalities
@@ -257,7 +299,16 @@ require("lazy").setup({
 			},
 			animate = {},
 			explorer = {},
-			picker = {},
+			picker = {
+				win = {
+					input = {
+						keys = {
+							-- Map Ctrl + y to accept / open the current selection
+							["<c-y>"] = { "confirm", mode = { "n", "i" } },
+						},
+					},
+				},
+			},
 			indent = {},
 			keymap = {},
 			lazygit = {},
@@ -314,7 +365,7 @@ require("lazy").setup({
 				desc = "[F]ind [F]iles",
 			},
 			{
-				"/",
+				"<leader>/",
 				function()
 					Snacks.picker.lines()
 				end,
@@ -337,7 +388,16 @@ require("lazy").setup({
 			{
 				"<leader>fb",
 				function()
-					Snacks.picker.buffers()
+					Snacks.picker.buffers({
+						win = {
+							input = {
+								keys = {
+									-- Map Ctrl + d to deleted the hovered buffer
+									["<c-d>"] = { "bufdelete", mode = { "n", "i" } },
+								},
+							},
+						},
+					})
 				end,
 				desc = "[F]ind [B]uffers",
 			},
@@ -380,6 +440,21 @@ require("lazy").setup({
 				end,
 				desc = "[L]azy[D]ocker",
 			},
+		},
+	},
+	{
+		"lewis6991/gitsigns.nvim",
+		opts = {
+			signs = {
+				add = { text = "▎" },
+				change = { text = "▎" },
+				delete = { text = "" },
+				topdelete = { text = "" },
+				changedelete = { text = "▎" },
+				untracked = { text = "▎" },
+			},
+			-- Adds a subtle highlight to the line number for modified lines
+			numhl = true,
 		},
 	},
 
@@ -688,17 +763,12 @@ require("lazy").setup({
 				nerd_font_variant = "mono",
 			},
 			sources = {
-				default = { "lazydev", "lsp", "path", "snippets", "buffer", "dadbod" },
+				default = { "lazydev", "lsp", "path", "snippets", "buffer" },
 				providers = {
 					lazydev = {
 						name = "LazyDev",
 						module = "lazydev.integrations.blink",
 						score_offset = 100,
-					},
-
-					dadbod = {
-						name = "Dadbod",
-						module = "vim_dadbod_completion.blink",
 					},
 				},
 			},
@@ -715,27 +785,6 @@ require("lazy").setup({
 				{ path = "${3rd}/luv/library", words = { "vim%.uv" } },
 				"snacks.nvim", -- Teaches the LSP about the Snacks global!
 			},
-		},
-	},
-
-	-- =========================================================================
-	-- Database (Dadbod)
-	-- =========================================================================
-	{
-		"kristijanhusak/vim-dadbod-ui",
-		dependencies = {
-			{ "tpope/vim-dadbod", lazy = true },
-			{ "kristijanhusak/vim-dadbod-completion", ft = { "sql", "mysql", "plsql" }, lazy = true },
-		},
-		cmd = { "DBUI", "DBUIToggle", "DBUIAddConnection", "DBUIFindBuffer" },
-		init = function()
-			-- Tell Dadbod to use your modern Nerd Font icons
-			vim.g.db_ui_use_nerd_fonts = 1
-			-- Save database queries in a specific folder so they don't clutter your project
-			vim.g.db_ui_save_location = vim.fn.stdpath("config") .. "/require/db_ui"
-		end,
-		keys = {
-			{ "<leader>db", "<cmd>DBUIToggle<CR>", desc = "Toggle [D]ata[B]ase UI" },
 		},
 	},
 })

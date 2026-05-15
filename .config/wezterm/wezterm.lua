@@ -38,8 +38,9 @@ config.initial_cols = 120
 config.initial_rows = 28
 config.enable_tab_bar = false -- Change this to enable the tab bar
 config.use_fancy_tab_bar = false
-config.enable_scroll_bar = true
-config.window_decorations = "RESIZE"
+config.hide_tab_bar_if_only_one_tab = false
+config.enable_scroll_bar = false
+config.window_decorations = "NONE"
 
 -- Uniform padding around the edges of the terminal
 config.window_padding = {
@@ -49,7 +50,7 @@ config.window_padding = {
 	bottom = 5,
 }
 
--- ============================================================================
+-- ============================================================================#15161a
 -- Fonts & Colors
 -- ============================================================================
 
@@ -60,10 +61,11 @@ config.color_scheme = "Tokyo Night"
 
 -- Custom color overrides
 config.colors = {
-	background = "#131313",
+	background = "#15161a",
 }
 
-config.window_background_opacity = 1.0
+config.window_background_opacity = 0.97
+config.macos_window_background_blur = 20
 config.default_cursor_style = "BlinkingBar"
 
 -- Finally, return the configuration to WezTerm
