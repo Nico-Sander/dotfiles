@@ -27,6 +27,9 @@ config.enable_wayland = false
 -- (If WebGpu causes graphical glitches, change this to "OpenGL")
 config.front_end = "WebGpu"
 
+-- Launch tmux automatically, attachin to 'main' or creating it
+config.default_prog = { "tmux", "new-session", "-A", "-s", "main" }
+
 -- ============================================================================
 -- Window Appearance & UI
 -- ============================================================================
@@ -50,7 +53,8 @@ config.window_padding = {
 -- Fonts & Colors
 -- ============================================================================
 
-config.font = wezterm.font("CaskaydiaCove Nerd Font", { weight = "Medium", italic = false })
+--config.font = wezterm.font("CaskaydiaCove Nerd Font", { weight = "Medium", italic = false })
+config.font = wezterm.font("JetBrainsMonoNL Nerd Font", { weight = "Medium", italic = false })
 config.font_size = 12
 config.color_scheme = "Tokyo Night"
 

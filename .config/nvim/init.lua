@@ -1,6 +1,9 @@
 -- Global options
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
+-- Disable the default spacebar behavior so it doesn't move the cursor
+vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", { silent = true })
+
 vim.g.have_nerd_font = true
 vim.g.termguicolors = true
 
@@ -43,12 +46,12 @@ vim.opt.showmode = false
 vim.opt.inccommand = "split"
 vim.opt.cursorline = true
 
--- Window Keymaps
-vim.keymap.set("n", "<C-h>", "<C-w><C-h>", { desc = "Move focus to the left window" })
-vim.keymap.set("n", "<C-l>", "<C-w><C-l>", { desc = "Move focus to the right window" })
-vim.keymap.set("n", "<C-j>", "<C-w><C-j>", { desc = "Move focus to the lower window" })
-vim.keymap.set("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus to the upper window" })
-vim.keymap.set("n", "gl", vim.diagnostic.open_float, { desc = "Show diagnostic float" })
+-- Window Keymaps (Standard control keys don't trigger which-key unless mapped, so plain text is fine here)
+vim.keymap.set("n", "<C-h>", "<C-w><C-h>", { desc = "Focus Left Window" })
+vim.keymap.set("n", "<C-l>", "<C-w><C-l>", { desc = "Focus Right Window" })
+vim.keymap.set("n", "<C-j>", "<C-w><C-j>", { desc = "Focus Lower Window" })
+vim.keymap.set("n", "<C-k>", "<C-w><C-k>", { desc = "Focus Upper Window" })
+vim.keymap.set("n", "gl", vim.diagnostic.open_float, { desc = "Show Diagnostic Float" })
 
 -- =========================================================================
 -- Diagnostics Configuration & Appearance
@@ -183,6 +186,11 @@ require("lazy").setup({
 				"css",
 				"sql",
 				"python",
+				"cpp",
+				"yaml",
+				"json",
+				"xml",
+				"dockerfile",
 			})
 
 			-- 2. Tell Neovim 0.11 to natively attach Treesitter to every file
@@ -294,7 +302,7 @@ require("lazy").setup({
 				function()
 					Snacks.explorer()
 				end,
-				desc = "Toggle Snacks Explorer",
+				desc = "[E]xplorer (Snacks)",
 			},
 
 			-- Picker keys
@@ -303,56 +311,56 @@ require("lazy").setup({
 				function()
 					Snacks.picker.files()
 				end,
-				desc = "Find Files",
+				desc = "[F]ind [F]iles",
 			},
 			{
 				"/",
 				function()
 					Snacks.picker.lines()
 				end,
-				desc = "Grep in Buffer",
+				desc = "[/] Grep in Buffer",
 			},
 			{
 				"<leader>fg",
 				function()
 					Snacks.picker.grep()
 				end,
-				desc = "Live Grep",
+				desc = "[F]ind by [G]rep",
 			},
 			{
 				"<leader>fc",
 				function()
 					Snacks.picker.files({ cwd = vim.fn.stdpath("config") })
 				end,
-				desc = "Find Config Files",
+				desc = "[F]ind [C]onfig Files",
 			},
 			{
 				"<leader>fb",
 				function()
 					Snacks.picker.buffers()
 				end,
-				desc = "Find Buffers",
+				desc = "[F]ind [B]uffers",
 			},
 			{
 				"<leader>fd",
 				function()
 					Snacks.picker.diagnostics_buffer()
 				end,
-				desc = "Buffer Diagnostics",
+				desc = "[F]ind [D]iagnostics (Buffer)",
 			},
 			{
 				"<leader>fD",
 				function()
 					Snacks.picker.diagnostics()
 				end,
-				desc = "Workspace Diagnostics",
+				desc = "[F]ind [D]iagnostics (Workspace)",
 			},
 			{
 				"<leader>km",
 				function()
 					Snacks.picker.keymaps()
 				end,
-				desc = "Find Keymaps",
+				desc = "[K]ey[M]aps",
 			},
 
 			-- Git keys
@@ -361,7 +369,16 @@ require("lazy").setup({
 				function()
 					Snacks.lazygit()
 				end,
-				desc = "Lazygit",
+				desc = "[L]azy[G]it",
+			},
+
+			-- Lazy Docker
+			{
+				"<leader>ld",
+				function()
+					Snacks.terminal("lazydocker")
+				end,
+				desc = "[L]azy[D]ocker",
 			},
 		},
 	},
@@ -412,14 +429,35 @@ require("lazy").setup({
 		},
 	},
 
+	-- {
+	-- 	"sphamba/smear-cursor.nvim",
+	-- 	opts = {
+	-- 		-- You can leave this empty to use default settings
+	-- 		-- Or tweak how "stiff" or "smeary" it looks
+	-- 		stiffness = 0.8,
+	-- 		trailing_stiffness = 0.5,
+	-- 		distance_stop_animating = 0.5,
+	-- 	},
+	-- },
+	--
 	{
-		"sphamba/smear-cursor.nvim",
+		"linux-cultist/venv-selector.nvim",
+		dependencies = {
+			"neovim/nvim-lspconfig",
+			"nvim-telescope/telescope.nvim",
+			"mfussenegger/nvim-dap-python",
+		},
 		opts = {
-			-- You can leave this empty to use default settings
-			-- Or tweak how "stiff" or "smeary" it looks
-			stiffness = 0.8,
-			trailing_stiffness = 0.5,
-			distance_stop_animating = 0.5,
+			name = {
+				"venv",
+				".venv",
+				"env",
+				".env",
+				-- Add custom patterns here if uv generates specific folder names
+			},
+		},
+		keys = {
+			{ "<leader>vs", "<cmd>VenvSelect<cr>", desc = "[V]env [S]elect" },
 		},
 	},
 
@@ -427,8 +465,17 @@ require("lazy").setup({
 		"folke/which-key.nvim",
 		event = "VeryLazy",
 		opts = {
-			-- Your configuration comes here
-			-- or leave it empty to use the default settings
+			-- Define your prefix groups here
+			spec = {
+				{ "<leader>c", group = "[C]ode", mode = { "n", "x" } },
+				{ "<leader>d", group = "[D]atabase" },
+				{ "<leader>f", group = "[F]ind / Search" },
+				{ "<leader>k", group = "[K]eymaps" },
+				{ "<leader>l", group = "[L]azy Tools" },
+				{ "<leader>s", group = "[S]earch / Symbols" },
+				{ "<leader>t", group = "[T]oggle" },
+				{ "<leader>v", group = "[V]irtual Env" },
+			},
 		},
 		keys = {
 			{
@@ -436,7 +483,7 @@ require("lazy").setup({
 				function()
 					require("which-key").show({ global = false })
 				end,
-				desc = "Buffer Local Keymaps (which-key)",
+				desc = "[?] Buffer Local Keymaps (which-key)",
 			},
 		},
 	},
@@ -464,7 +511,6 @@ require("lazy").setup({
 					end
 
 					-- SUPERCHARGED BY SNACKS.NVIM:
-					-- Instead of boring default lists, use our beautiful fuzzy picker!
 					map("gd", function()
 						Snacks.picker.lsp_definitions()
 					end, "[G]oto [D]efinition")
@@ -476,7 +522,7 @@ require("lazy").setup({
 					end, "[G]oto [I]mplementation")
 					map("<leader>ss", function()
 						Snacks.picker.lsp_symbols()
-					end, "LSP [S]ymbols")
+					end, "[S]earch [S]ymbols")
 
 					-- Standard LSP actions
 					map("grn", vim.lsp.buf.rename, "[R]e[n]ame")
@@ -535,6 +581,12 @@ require("lazy").setup({
 								typeCheckingMode = "basic", -- Change to "strict" if you want hard mode
 								autoSearchPaths = true,
 								useLibraryCodeForTypes = true,
+								diagnosticSeverityOverrides = {
+									reportUnusedVariable = "none",
+									reportUnusedImport = "none",
+									reportUnusedClass = "none",
+									reportUnusedFunction = "none",
+								},
 							},
 						},
 					},
@@ -542,6 +594,11 @@ require("lazy").setup({
 
 				-- Add Ruff for lightning-fast linting and formatting
 				ruff = {},
+
+				clangd = {},
+				yamlls = {},
+				dockerls = {},
+				docker_compose_language_service = {},
 			}
 
 			require("mason-tool-installer").setup({
@@ -557,6 +614,10 @@ require("lazy").setup({
 					-- Python
 					"pyright",
 					"ruff",
+					"clangd",
+					"yaml-language-server",
+					"dockerfile-language-server",
+					"docker-compose-language-service",
 				},
 			})
 
@@ -582,12 +643,12 @@ require("lazy").setup({
 		cmd = { "ConformInfo" },
 		keys = {
 			{
-				"<leader>f",
+				"<leader>cf",
 				function()
 					require("conform").format({ async = true, lsp_fallback = true })
 				end,
 				mode = "",
-				desc = "[F]ormat buffer",
+				desc = "[C]ode [F]ormat Buffer",
 			},
 		},
 		opts = {
