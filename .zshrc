@@ -5,7 +5,8 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-. "$HOME/.local/bin/env"
+# Generated for envman. Do not edit.
+[[ -s "$HOME/.config/envman/load.sh" ]] && source "$HOME/.config/envman/load.sh"
 export PATH="$PATH:/opt/nvim/"
 export PATH="$PATH:/opt/nvim12/"
 
@@ -78,8 +79,12 @@ export FZF_CTRL_R_OPTS="--bind 'ctrl-y:accept'"
 alias ls='lsd'
 
 # Shell integrations
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-eval "$(fzf --zsh)"
+if [[ -f /usr/share/doc/fzf/examples/completion.zsh ]]; then
+  source /usr/share/doc/fzf/examples/completion.zsh
+fi
+if [[ -f /usr/share/doc/fzf/examples/key-bindings.zsh ]]; then
+  source /usr/share/doc/fzf/examples/key-bindings.zsh
+fi
 
 # Zoxide
 eval "$(zoxide init zsh)"
@@ -91,3 +96,7 @@ alias cat='batcat'
 # Obsidian vault
 export VAULT="$HOME/workspace/github.com/Nico-Sander/nico-vault/"
 alias notes="cd $VAULT && nvim"
+
+
+# Added by Antigravity CLI installer
+export PATH="/home/nico/.local/bin:$PATH"
