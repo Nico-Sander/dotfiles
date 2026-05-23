@@ -42,7 +42,7 @@
     },
     "inlineChat.lineNaturalLanguageHint": false,
     "geminicodeassist.project": "stellar-lodge-nfg2z",
-    "geminicodeassist.inlineSuggestions.enableAuto": true,
+    "geminicodeassist.inlineSuggestions.enableAuto": false,
 
     "[latex]": {
         "editor.wordWrap": "bounded",
