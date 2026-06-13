@@ -7,6 +7,8 @@ fi
 
 # Generated for envman. Do not edit.
 [[ -s "$HOME/.config/envman/load.sh" ]] && source "$HOME/.config/envman/load.sh"
+# Added by Antigravity CLI installer
+export PATH="/home/nico/.local/bin:$PATH"
 export PATH="$PATH:/opt/nvim/"
 export PATH="$PATH:/opt/nvim12/"
 
@@ -87,8 +89,10 @@ if [[ -f /usr/share/doc/fzf/examples/key-bindings.zsh ]]; then
 fi
 
 # Zoxide
-eval "$(zoxide init zsh)"
-alias cd='z'
+if (( $+commands[zoxide] )); then
+  eval "$(zoxide init zsh)"
+  alias cd='z'
+fi
 
 # Bat
 alias cat='batcat'
@@ -98,5 +102,4 @@ export VAULT="$HOME/workspace/github.com/Nico-Sander/nico-vault/"
 alias notes="cd $VAULT && nvim"
 
 
-# Added by Antigravity CLI installer
-export PATH="/home/nico/.local/bin:$PATH"
+
