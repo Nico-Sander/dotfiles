@@ -22,8 +22,17 @@ vim.opt.smartindent = true
 -- Search
 vim.opt.ignorecase = true
 vim.opt.signcolumn = "yes"
-vim.opt.wrap = false
+vim.opt.wrap = true
+vim.opt.linebreak = true
+vim.opt.showbreak = "↳ "
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>") -- Clear highlights on search when pressing <Esc> in normal mode
+
+-- Toggle linewrap
+vim.keymap.set("n", "<Leader>wt", ":set wrap!<CR>", { desc = "Toggle Line Wrap" })
+
+-- Move by visual lines
+vim.keymap.set("n", "j", "gj", { noremap = true })
+vim.keymap.set("n", "k", "gk", { noremap = true })
 
 -- Folds
 vim.opt.foldlevel = 99
