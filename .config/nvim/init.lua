@@ -90,6 +90,10 @@ for type, icon in pairs(signs) do
 end
 
 -- 4. The smarter toggle keymap
+vim.keymap.set("n", "<leader>th", function()
+	vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
+end, { desc = "[T]oggle Inlay [H]ints" })
+
 vim.keymap.set("n", "<leader>tv", function()
 	-- Check if virtual text is currently active
 	local current_vt = vim.diagnostic.config().virtual_text
@@ -138,7 +142,7 @@ vim.api.nvim_create_autocmd("FileType", { -- on event FileType
 -- Bootstrap lazy.nvim
 -- =========================================================================
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not vim.loop.fs_stat(lazypath) then
+if not vim.uv.fs_stat(lazypath) then
 	vim.fn.system({
 		"git",
 		"clone",
@@ -175,26 +179,10 @@ require("lazy").setup({
 	{
 		"nvim-treesitter/nvim-treesitter",
 		branch = "main",
-		build = ":TSUpdate",
-		config = function()
-			-- 1. Install the parsers
+		-- Nvim 0.12 bundles: bash, c, lua, markdown, markdown_inline, python, query, vim, vimdoc
+		-- Only install parsers NOT already bundled
+		build = function()
 			require("nvim-treesitter").install({
-				"bash",
-				"c",
-				"html",
-				"lua",
-				"markdown",
-				"markdown_inline",
-				"query",
-				"vim",
-				"vimdoc",
-				"go",
-				"gomod",
-				"gosum",
-				"gotmpl",
-				"css",
-				"sql",
-				"python",
 				"cpp",
 				"yaml",
 				"json",
@@ -202,17 +190,17 @@ require("lazy").setup({
 				"dockerfile",
 				"latex",
 			})
-
-			-- 2. Tell Neovim 0.11 to natively attach Treesitter to every file
+		end,
+		config = function()
+			-- Natively attach Treesitter to every file
 			vim.api.nvim_create_autocmd("FileType", {
 				pattern = "*",
 				callback = function()
-					-- pcall prevents errors if you open a filetype you haven't installed a parser for
 					pcall(vim.treesitter.start)
 				end,
 			})
 
-			-- 3. Use Neovim's native Treesitter code folding
+			-- Native Treesitter code folding
 			vim.opt.foldmethod = "expr"
 			vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 		end,
@@ -539,7 +527,6 @@ require("lazy").setup({
 		"linux-cultist/venv-selector.nvim",
 		dependencies = {
 			"neovim/nvim-lspconfig",
-			"nvim-telescope/telescope.nvim",
 			"mfussenegger/nvim-dap-python",
 		},
 		opts = {
@@ -568,7 +555,7 @@ require("lazy").setup({
 				{ "<leader>k", group = "[K]eymaps" },
 				{ "<leader>l", group = "[L]azy Tools" },
 				{ "<leader>s", group = "[S]earch / Symbols" },
-				{ "<leader>t", group = "[T]oggle" },
+				{ "<leader>t", group = "[T]oggle", mode = { "n" } },
 				{ "<leader>v", group = "[V]irtual Env" },
 			},
 		},
@@ -626,6 +613,9 @@ require("lazy").setup({
 
 					-- Highlight references of the word under your cursor
 					local client = vim.lsp.get_client_by_id(event.data.client_id)
+					if client and client:supports_method("textDocument/inlayHint", event.buf) then
+						vim.lsp.inlay_hint.enable(true, { bufnr = event.buf })
+					end
 					if client and client:supports_method("textDocument/documentHighlight", event.buf) then
 						local highlight_augroup =
 							vim.api.nvim_create_augroup("kickstart-lsp-highlight", { clear = false })
@@ -643,69 +633,62 @@ require("lazy").setup({
 				end,
 			})
 
-			-- Define which language servers to install and configure
-			local servers = {
-				lua_ls = {
-					settings = {
-						Lua = {
-							completion = { callSnippet = "Replace" },
-							diagnostics = { disable = { "missing-fields" } },
+			-- Inject blink.cmp capabilities into every LSP server
+			vim.lsp.config("*", {
+				capabilities = require("blink.cmp").get_lsp_capabilities(),
+			})
+
+			-- Per-server settings (new native API: replaces mason-lspconfig handlers)
+			vim.lsp.config("lua_ls", {
+				settings = {
+					Lua = {
+						completion = { callSnippet = "Replace" },
+						diagnostics = {
+							globals = { "vim" },
+							disable = { "missing-fields" },
 						},
 					},
 				},
+			})
 
-				gopls = {},
+			--vim.lsp.config("gopls", {})
 
-				html = { filetypes = { "html", "gotmpl" } },
-				htmx = { filetypes = { "html", "gotmpl" } },
+			--vim.lsp.config("html", { filetypes = { "html", "gotmpl" } })
+			--vim.lsp.config("htmx", { filetypes = { "html", "gotmpl" } })
 
-				tailwindcss = {
-					filetypes = { "html", "css", "gotmpl" },
-					init_options = {
-						userLanguages = {
-							gotmpl = "html",
-						},
-					},
-				},
+			-- vim.lsp.config("tailwindcss", {
+			-- 	filetypes = { "html", "css", "gotmpl" },
+			-- 	init_options = { userLanguages = { gotmpl = "html" } },
+			-- })
 
-				-- Python
-				pyright = {
-					settings = {
-						python = {
-							analysis = {
-								typeCheckingMode = "basic", -- Change to "strict" if you want hard mode
-								autoSearchPaths = true,
-								useLibraryCodeForTypes = true,
-								diagnosticSeverityOverrides = {
-									reportUnusedVariable = "none",
-									reportUnusedImport = "none",
-									reportUnusedClass = "none",
-									reportUnusedFunction = "none",
-								},
+			vim.lsp.config("pyright", {
+				settings = {
+					python = {
+						analysis = {
+							typeCheckingMode = "basic", -- Change to "strict" if you want hard mode
+							autoSearchPaths = true,
+							useLibraryCodeForTypes = true,
+							diagnosticSeverityOverrides = {
+								reportUnusedVariable = "none",
+								reportUnusedImport = "none",
+								reportUnusedClass = "none",
+								reportUnusedFunction = "none",
 							},
 						},
 					},
 				},
-
-				-- Add Ruff for lightning-fast linting and formatting
-				ruff = {},
-
-				clangd = {},
-				yamlls = {},
-				dockerls = {},
-				docker_compose_language_service = {},
-			}
+			})
 
 			require("mason-tool-installer").setup({
 				ensure_installed = {
 					"lua_ls",
 					"stylua",
-					"gopls",
-					"goimports",
-					"tailwindcss-language-server",
-					"html-lsp",
-					"htmx-lsp",
-					"sql-formatter",
+					-- "gopls",
+					-- "goimports",
+					-- "tailwindcss-language-server",
+					-- "html-lsp",
+					-- "htmx-lsp",
+					-- "sql-formatter",
 					-- Python
 					"pyright",
 					"ruff",
@@ -714,18 +697,12 @@ require("lazy").setup({
 					"dockerfile-language-server",
 					"docker-compose-language-service",
 				},
+				run_on_start = false, -- run :MasonToolsInstall manually after fresh setup
+				auto_update = false,
 			})
 
-			require("mason-lspconfig").setup({
-				handlers = {
-					function(server_name)
-						local server = servers[server_name] or {}
-						-- This is crucial: it passes blink.cmp capabilities to the LSP
-						server.capabilities = require("blink.cmp").get_lsp_capabilities(server.capabilities)
-						require("lspconfig")[server_name].setup(server)
-					end,
-				},
-			})
+			-- mason-lspconfig now uses vim.lsp.enable() internally; no handlers needed
+			require("mason-lspconfig").setup()
 		end,
 	},
 
@@ -740,7 +717,7 @@ require("lazy").setup({
 			{
 				"<leader>cf",
 				function()
-					require("conform").format({ async = true, lsp_fallback = true })
+					require("conform").format({ async = true, lsp_format = "fallback" })
 				end,
 				mode = "",
 				desc = "[C]ode [F]ormat Buffer",
@@ -750,7 +727,7 @@ require("lazy").setup({
 			notify_on_error = false,
 			format_on_save = {
 				timeout_ms = 500,
-				lsp_fallback = true,
+				lsp_format = "fallback",
 			},
 			formatters_by_ft = {
 				lua = { "stylua" },

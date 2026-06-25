@@ -101,5 +101,14 @@ alias cat='batcat'
 export VAULT="$HOME/workspace/github.com/Nico-Sander/nico-vault/"
 alias notes="cd $VAULT && nvim"
 
+# Cargo
+export PATH="$PATH:$HOME/.cargo/bin"
+export PATH="$PATH:$HOME/.local/bin"
+ 
 
 
+
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
