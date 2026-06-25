@@ -644,7 +644,7 @@ require("lazy").setup({
 					Lua = {
 						completion = { callSnippet = "Replace" },
 						diagnostics = {
-							globals = { "vim" },
+							globals = { "vim", "Snacks" },
 							disable = { "missing-fields" },
 						},
 					},
@@ -780,7 +780,9 @@ require("lazy").setup({
 			library = {
 				-- Load luvit types when the `vim.uv` word is found
 				{ path = "${3rd}/luv/library", words = { "vim%.uv" } },
-				"snacks.nvim", -- Teaches the LSP about the Snacks global!
+				"snacks.nvim",
+				"flash.nvim",
+				"render-markdown.nvim",
 			},
 		},
 	},
