@@ -303,7 +303,7 @@ require("lazy").setup({
 				expand = true,
 			},
 			dashboard = {
-				example = "advanced",
+				example = "pokemon",
 			},
 			animate = {},
 			explorer = {},
@@ -452,6 +452,7 @@ require("lazy").setup({
 	},
 	{
 		"lewis6991/gitsigns.nvim",
+		event = { "BufReadPre", "BufNewFile" },
 		opts = {
 			signs = {
 				add = { text = "▎" },
