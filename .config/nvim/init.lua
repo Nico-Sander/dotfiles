@@ -184,6 +184,8 @@ require("lazy").setup({
 		build = function()
 			require("nvim-treesitter").install({
 				"cpp",
+				"rust",
+				"toml",
 				"yaml",
 				"json",
 				"xml",
@@ -661,6 +663,14 @@ require("lazy").setup({
 			-- 	filetypes = { "html", "css", "gotmpl" },
 			-- 	init_options = { userLanguages = { gotmpl = "html" } },
 			-- })
+			vim.lsp.config("rust_analyzer", {
+				settings = {
+					["rust-analyzer"] = {
+						check = { command = "clippy" }, -- use clippy instead of plain `cargo check`
+						cargo = { allFeatures = true },
+					},
+				},
+			})
 
 			vim.lsp.config("pyright", {
 				settings = {
@@ -684,6 +694,7 @@ require("lazy").setup({
 				ensure_installed = {
 					"lua_ls",
 					"stylua",
+					"rust-analyzer",
 					-- "gopls",
 					-- "goimports",
 					-- "tailwindcss-language-server",
@@ -735,6 +746,7 @@ require("lazy").setup({
 				go = { "goimports" },
 				sql = { "sql_formatter" },
 				python = { "isort", "black" },
+				rust = { "rustfmt" },
 			},
 			formatters = {
 				sql_formatter = {
