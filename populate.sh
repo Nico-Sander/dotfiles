@@ -61,6 +61,20 @@ else
     echo -e "    ${GREEN}[+] tmux is already installed.${NC}"
 fi
 
+# 2b. Check and Install clipboard utilities
+# tmux-yank and Neovim's "unnamedplus" both shell out to these; without them
+# yanking silently does nothing.
+echo -e "${BLUE}[*] Checking for clipboard utilities...${NC}"
+for pkg in xclip wl-clipboard; do
+    if ! dpkg -s "$pkg" &> /dev/null; then
+        echo -e "    [>] $pkg not found. Installing..."
+        sudo apt update
+        sudo apt install -y "$pkg"
+    else
+        echo -e "    ${GREEN}[+] $pkg is already installed.${NC}"
+    fi
+done
+
 # 3. Check and Install TPM (Tmux Plugin Manager)
 TPM_DIR="$HOME/.config/tmux/plugins/tpm"
 echo -e "${BLUE}[*] Checking for Tmux Plugin Manager (TPM)...${NC}"
