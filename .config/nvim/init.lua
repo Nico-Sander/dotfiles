@@ -62,6 +62,20 @@ vim.keymap.set("n", "<C-j>", "<C-w><C-j>", { desc = "Focus Lower Window" })
 vim.keymap.set("n", "<C-k>", "<C-w><C-k>", { desc = "Focus Upper Window" })
 vim.keymap.set("n", "gl", vim.diagnostic.open_float, { desc = "Show Diagnostic Float" })
 
+-- Ensure autoread is enabled
+vim.opt.autoread = true
+
+-- Create an autocommand to check for file changes
+vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHoldI" }, {
+	pattern = "*",
+	callback = function()
+		-- checktime tells Neovim to check if the file was modified outside
+		if vim.api.nvim_get_mode().mode ~= "c" then
+			vim.cmd("checktime")
+		end
+	end,
+})
+
 -- =========================================================================
 -- Diagnostics Configuration & Appearance
 -- =========================================================================
@@ -617,7 +631,7 @@ require("lazy").setup({
 					-- Highlight references of the word under your cursor
 					local client = vim.lsp.get_client_by_id(event.data.client_id)
 					if client and client:supports_method("textDocument/inlayHint", event.buf) then
-						vim.lsp.inlay_hint.enable(true, { bufnr = event.buf })
+						vim.lsp.inlay_hint.enable(false, { bufnr = event.buf })
 					end
 					if client and client:supports_method("textDocument/documentHighlight", event.buf) then
 						local highlight_augroup =

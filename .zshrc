@@ -111,3 +111,5 @@ export NVM_DIR="$HOME/.nvm"
 
 export VISUAL="nvim"
 export EDITOR="$VISUAL"
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
