@@ -56,10 +56,10 @@ vim.opt.inccommand = "split"
 vim.opt.cursorline = true
 
 -- Window Keymaps (Standard control keys don't trigger which-key unless mapped, so plain text is fine here)
-vim.keymap.set("n", "<C-h>", "<C-w><C-h>", { desc = "Focus Left Window" })
-vim.keymap.set("n", "<C-l>", "<C-w><C-l>", { desc = "Focus Right Window" })
-vim.keymap.set("n", "<C-j>", "<C-w><C-j>", { desc = "Focus Lower Window" })
-vim.keymap.set("n", "<C-k>", "<C-w><C-k>", { desc = "Focus Upper Window" })
+-- vim.keymap.set("n", "<C-h>", "<C-w><C-h>", { desc = "Focus Left Window" })
+-- vim.keymap.set("n", "<C-l>", "<C-w><C-l>", { desc = "Focus Right Window" })
+-- vim.keymap.set("n", "<C-j>", "<C-w><C-j>", { desc = "Focus Lower Window" })
+-- vim.keymap.set("n", "<C-k>", "<C-w><C-k>", { desc = "Focus Upper Window" })
 vim.keymap.set("n", "gl", vim.diagnostic.open_float, { desc = "Show Diagnostic Float" })
 
 -- Ensure autoread is enabled
