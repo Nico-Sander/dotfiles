@@ -161,6 +161,62 @@ else
 fi
 
 # ===========================================================================
+# Tmux keybind conflict check
+# ===========================================================================
+echo -e "${BLUE}[*] Checking for system keybind conflicts with tmux...${NC}"
+_check_tmux_keybind_conflicts() {
+    local tmux_conf="$HOME/.config/tmux/tmux.conf"
+
+    if [[ ! -f "$tmux_conf" ]]; then
+        echo -e "    ${YELLOW}[!] tmux config not found at $tmux_conf — skipping.${NC}"
+        return 0
+    fi
+    if ! command -v gsettings &>/dev/null; then
+        echo -e "    ${YELLOW}[!] gsettings not available — skipping (non-GNOME system?).${NC}"
+        return 0
+    fi
+
+    local all_settings conflicts=0 raw_key gnome_key matches
+    all_settings=$(gsettings list-recursively 2>/dev/null)
+
+    while IFS= read -r line; do
+        # Skip comments and blank lines
+        [[ "$line" =~ ^[[:space:]]*# || -z "$line" ]] && continue
+        # Match no-prefix Alt binds: bind -n M-<key>
+        [[ "$line" =~ ^[[:space:]]*bind[[:space:]]+-n[[:space:]]+M-([^[:space:]]+) ]] || continue
+        raw_key="${BASH_REMATCH[1]}"
+
+        # Convert to GNOME accelerator format; capital letter implies <Shift>
+        if [[ "$raw_key" =~ ^[A-Z]$ ]]; then
+            gnome_key="<Alt><Shift>${raw_key,,}"
+        else
+            gnome_key="<Alt>${raw_key}"
+        fi
+
+        # Search all gsettings for this accelerator, ignore empty arrays
+        matches=$(echo "$all_settings" \
+            | grep -F "'${gnome_key}'" \
+            | grep -Ev "@as \[\]|'\[\]'")
+
+        if [[ -n "$matches" ]]; then
+            echo -e "    ${RED}[!] Conflict: tmux M-${raw_key} (${gnome_key}) clashes with:${NC}"
+            echo "$matches" | while IFS= read -r m; do
+                echo -e "        ${YELLOW}${m}${NC}"
+            done
+            conflicts=$((conflicts + 1))
+        fi
+    done < "$tmux_conf"
+
+    if [[ "$conflicts" -eq 0 ]]; then
+        echo -e "    ${GREEN}[+] No keybind conflicts found.${NC}"
+    else
+        echo -e "    ${RED}[!] ${conflicts} conflict(s) found above. Clear them with:${NC}"
+        echo -e "    ${YELLOW}    gsettings set <schema> <key> '[]'${NC}"
+    fi
+}
+_check_tmux_keybind_conflicts
+
+# ===========================================================================
 # Clipboard utilities
 # ===========================================================================
 # tmux-yank and Neovim's "unnamedplus" both shell out to these; without them
