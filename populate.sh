@@ -25,12 +25,49 @@ sudo apt install -y \
     build-essential \
     libfuse2 \
     xclip \
-    lsd \
-    bat \
-    zoxide \
     unzip \
     fontconfig
 echo -e "    ${GREEN}[+] Prerequisites installed.${NC}"
+
+# ===========================================================================
+# Modern CLI tools (lsd, bat, zoxide) via latest GitHub release .deb
+# ===========================================================================
+# Ubuntu's apt versions are missing or stale: jammy has no "lsd" package at
+# all, and ships bat 0.19.0 / zoxide 0.4.3 against current upstream releases
+# of 0.26+ / 0.10+. Pull the latest .deb from GitHub instead so dependency
+# resolution and uninstall still go through apt/dpkg normally.
+_install_latest_github_deb() {
+    local bin_name="$1" repo="$2" pattern="$3"
+
+    if command -v "$bin_name" &> /dev/null; then
+        echo -e "    ${GREEN}[+] ${bin_name} is already installed.${NC}"
+        return 0
+    fi
+
+    echo -e "    [>] ${bin_name} not found. Fetching latest release from ${repo}..."
+    local url
+    url=$(curl -s "https://api.github.com/repos/${repo}/releases/latest" \
+        | grep '"browser_download_url"' \
+        | grep -E "$pattern" \
+        | head -n1 \
+        | cut -d'"' -f4)
+
+    if [[ -z "$url" ]]; then
+        echo -e "    ${RED}[!] Could not find a matching .deb release asset for ${bin_name}. Skipping.${NC}"
+        return 0
+    fi
+
+    local tmp_deb="/tmp/${bin_name}.deb"
+    curl -Lo "$tmp_deb" "$url"
+    sudo apt install -y "$tmp_deb"
+    rm -f "$tmp_deb"
+    echo -e "    ${GREEN}[+] ${bin_name} installed ($(basename "$url")).${NC}"
+}
+
+echo -e "${BLUE}[*] Checking for lsd, bat, zoxide...${NC}"
+_install_latest_github_deb "lsd" "lsd-rs/lsd" '/lsd_[0-9][^"]*_amd64\.deb'
+_install_latest_github_deb "bat" "sharkdp/bat" '/bat_[0-9][^"]*_amd64\.deb'
+_install_latest_github_deb "zoxide" "ajeetdsouza/zoxide" '/zoxide_[0-9][^"]*_amd64\.deb'
 
 # ===========================================================================
 # Stow dotfiles
