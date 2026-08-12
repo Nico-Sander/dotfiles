@@ -105,16 +105,64 @@ else
 fi
 
 # ===========================================================================
-# fzf (from source for the latest version)
+# fzf (latest release binary from GitHub)
 # ===========================================================================
+# Ubuntu ships an old fzf (jammy: 0.29, noble: 0.44) that predates the
+# `fzf --zsh` shell-integration flag (added in 0.48). The .zshrc relies on
+# `source <(fzf --zsh)`, so anything older prints "unknown option: --zsh"
+# during zsh startup. Install the latest prebuilt binary to /usr/local/bin,
+# which shadows any apt-provided /usr/bin/fzf, and upgrade if it's too old.
+FZF_MIN_VERSION="0.48.0"  # first release with `fzf --zsh`
+
+# True (0) if $1 >= $2, comparing dotted version strings.
+_version_ge() {
+    [ "$(printf '%s\n%s\n' "$1" "$2" | sort -V | head -n1)" = "$2" ]
+}
+
+_install_latest_fzf() {
+    local arch
+    case "$(uname -m)" in
+        x86_64|amd64)  arch="amd64" ;;
+        aarch64|arm64) arch="arm64" ;;
+        *)
+            echo -e "    ${RED}[!] Unsupported architecture $(uname -m) for fzf. Skipping.${NC}"
+            return 0
+            ;;
+    esac
+
+    local tag ver url tmp
+    tag=$(curl -s https://api.github.com/repos/junegunn/fzf/releases/latest \
+        | grep '"tag_name"' | cut -d'"' -f4)
+    if [[ -z "$tag" ]]; then
+        echo -e "    ${RED}[!] Could not determine latest fzf release. Skipping.${NC}"
+        return 0
+    fi
+    ver="${tag#v}"
+    url="https://github.com/junegunn/fzf/releases/download/${tag}/fzf-${ver}-linux_${arch}.tar.gz"
+
+    tmp=$(mktemp -d)
+    curl -Lo "$tmp/fzf.tar.gz" "$url"
+    tar -xzf "$tmp/fzf.tar.gz" -C "$tmp"
+    sudo install -m 755 "$tmp/fzf" /usr/local/bin/fzf
+    rm -rf "$tmp"
+    echo -e "    ${GREEN}[+] fzf ${ver} installed to /usr/local/bin.${NC}"
+}
+
 echo -e "${BLUE}[*] Checking for fzf...${NC}"
-if [ ! -d "$HOME/.fzf" ]; then
-    echo -e "    [>] fzf not found. Installing from source..."
-    git clone --depth 1 https://github.com/junegunn/fzf.git "$HOME/.fzf"
-    "$HOME/.fzf/install" --all
-    echo -e "    ${GREEN}[+] fzf installed.${NC}"
+if command -v fzf &> /dev/null; then
+    FZF_CURRENT=$(fzf --version | awk '{print $1}')
 else
-    echo -e "    ${GREEN}[+] fzf is already installed.${NC}"
+    FZF_CURRENT=""
+fi
+
+if [[ -z "$FZF_CURRENT" ]]; then
+    echo -e "    [>] fzf not found. Installing latest release..."
+    _install_latest_fzf
+elif _version_ge "$FZF_CURRENT" "$FZF_MIN_VERSION"; then
+    echo -e "    ${GREEN}[+] fzf ${FZF_CURRENT} is installed and recent enough.${NC}"
+else
+    echo -e "    ${YELLOW}[>] fzf ${FZF_CURRENT} is outdated (< ${FZF_MIN_VERSION}). Upgrading...${NC}"
+    _install_latest_fzf
 fi
 
 # ===========================================================================

@@ -80,12 +80,10 @@ export FZF_CTRL_R_OPTS="--bind 'ctrl-y:accept'"
 # Aliases
 alias ls='lsd'
 
-# Shell integrations
-if [[ -f /usr/share/doc/fzf/examples/completion.zsh ]]; then
-  source /usr/share/doc/fzf/examples/completion.zsh
-fi
-if [[ -f /usr/share/doc/fzf/examples/key-bindings.zsh ]]; then
-  source /usr/share/doc/fzf/examples/key-bindings.zsh
+# fzf shell integration (completion + key bindings).
+# populate.sh guarantees fzf >= 0.48, which supports `fzf --zsh`.
+if (( $+commands[fzf] )); then
+  source <(fzf --zsh)
 fi
 
 # Zoxide
@@ -112,8 +110,6 @@ export NVM_DIR="$HOME/.nvm"
 export VISUAL="nvim"
 export EDITOR="$VISUAL"
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
 __conda_setup="$('/home/nico/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
@@ -127,5 +123,6 @@ else
     fi
 fi
 unset __conda_setup
+conda deactivate
 # <<< conda initialize <<<
 
