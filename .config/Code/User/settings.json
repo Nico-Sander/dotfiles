@@ -79,5 +79,6 @@
     "chat.viewSessions.orientation": "stacked",
     "containers.containerClient": "com.microsoft.visualstudio.containers.docker",
     "containers.orchestratorClient": "com.microsoft.visualstudio.orchestrators.dockercompose",
-    "workbench.colorTheme": "Tokyo Night"
+    "workbench.colorTheme": "Tokyo Night",
+    "claudeCode.preferredLocation": "panel"
 }

@@ -86,11 +86,6 @@ if (( $+commands[fzf] )); then
   source <(fzf --zsh)
 fi
 
-# Zoxide
-if (( $+commands[zoxide] )); then
-  eval "$(zoxide init zsh)"
-  alias cd='z'
-fi
 
 # Bat
 alias cat='batcat'
@@ -126,3 +121,11 @@ unset __conda_setup
 conda deactivate
 # <<< conda initialize <<<
 
+conda deactivate
+
+# Zoxide
+if (( $+commands[zoxide] )); then
+  eval "$(zoxide init zsh)"
+  alias cd='z'
+fi
+export _ZO_DOCTOR=0
