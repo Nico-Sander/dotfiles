@@ -26,6 +26,8 @@ vim.opt.wrap = true
 vim.opt.linebreak = true
 vim.opt.showbreak = "↳ "
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>") -- Clear highlights on search when pressing <Esc> in normal mode
+vim.opt.textwidth = 80
+vim.opt.formatoptions:append("t")
 
 -- Toggle linewrap
 vim.keymap.set("n", "<Leader>wt", ":set wrap!<CR>", { desc = "Toggle Line Wrap" })
