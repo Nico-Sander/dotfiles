@@ -1,6 +1,7 @@
 -- Pull in the WezTerm API
 local wezterm = require("wezterm")
 local mux = wezterm.mux
+local act = wezterm.action
 
 -- ============================================================================
 -- Startup Events
@@ -50,7 +51,7 @@ config.window_padding = {
 	bottom = 5,
 }
 
--- ============================================================================#15161a
+-- ============================================================================
 -- Fonts & Colors
 -- ============================================================================
 
@@ -64,9 +65,33 @@ config.colors = {
 	background = "#15161a",
 }
 
-config.window_background_opacity = 0.97
+config.window_background_opacity = 1.0
 config.macos_window_background_blur = 20
-config.default_cursor_style = "BlinkingBar"
+config.default_cursor_style = "SteadyBlock"
+
+-- ============================================================================
+-- Mouse Settings
+-- ============================================================================
+config.mouse_bindings = {
+	-- Left click drag / release: copy selection to clipboard upon release
+	{
+		event = { Up = { streak = 1, button = "Left" } },
+		mods = "NONE",
+		action = act.CompleteSelectionOrOpenLinkAtMouseCursor("ClipboardAndPrimarySelection"),
+	},
+	-- Double-click to select word and copy to clipboard
+	{
+		event = { Up = { streak = 2, button = "Left" } },
+		mods = "NONE",
+		action = act.CompleteSelection("ClipboardAndPrimarySelection"),
+	},
+	-- Triple-click to select full line and copy to clipboard
+	{
+		event = { Up = { streak = 3, button = "Left" } },
+		mods = "NONE",
+		action = act.CompleteSelection("ClipboardAndPrimarySelection"),
+	},
+}
 
 -- Finally, return the configuration to WezTerm
 return config
