@@ -55,8 +55,38 @@ config.window_padding = {
 -- Fonts & Colors
 -- ============================================================================
 
---config.font = wezterm.font("CaskaydiaCove Nerd Font", { weight = "Medium", italic = false })
-config.font = wezterm.font("JetBrainsMonoNL Nerd Font", { weight = "Medium", italic = false })
+-- config.font = wezterm.font("CaskaydiaCove Nerd Font", { weight = "Medium", italic = false })
+-- config.font = wezterm.font("JetBrainsMonoNL Nerd Font", { weight = "Medium", italic = false })
+-- config.font = wezterm.font("JetBrainsMonoNL", { weight = "Medium", italic = false })
+
+config.font = wezterm.font_with_fallback {
+  {
+    family = 'JetBrains Mono',
+    weight = 'Medium',
+    italic = false,
+  },
+  {
+    family = 'JetBrainsMonoNL',
+    weight = 'Medium',
+    italic = false,
+  },
+  {
+    family = 'JetBrainsMonoNL Nerd Font',
+    weight = 'Medium',
+    italic = false,
+  },
+  {
+      family = 'CaskaydiaCove Nerd Font',
+      weight = 'Medium',
+      italic = false,
+  },
+  {
+      family = 'roboto',
+      weight = 'Medium',
+      italic = false,
+  },
+}
+
 config.font_size = 12
 config.color_scheme = "Tokyo Night"
 
