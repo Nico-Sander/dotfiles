@@ -66,6 +66,8 @@ vim.o.sidescrolloff = 8
 vim.o.winborder = "rounded"
 vim.o.splitbelow = true
 vim.o.splitright = true
+-- One global statusline; horizontal splits then get a WinSeparator line
+vim.o.laststatus = 3
 
 -- Swap and Undo files (Not yet clear)
 vim.o.swapfile = false

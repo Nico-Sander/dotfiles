@@ -5,6 +5,8 @@
 --   lua/config/opts.lua   options
 --   lua/config/keys.lua   keymaps
 --   lua/config/autocmds.lua  autocommands
+--   lua/config/plugins.lua   plugins (vim.pack) and their setup
+--   nvim-pack-lock.json   plugin revisions, written by vim.pack (commit it)
 -- Modules live in lua/config/ (require("config.x")) rather than directly in
 -- lua/, because all lua/ dirs on the runtimepath share one namespace: a
 -- plugin's lua/lsp.lua would be shadowed by ours, or the other way around.
@@ -24,3 +26,4 @@ vim.g.maplocalleader = " "
 require("config.opts")
 require("config.keys")
 require("config.autocmds")
+require("config.plugins")
