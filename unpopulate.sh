@@ -59,6 +59,34 @@ done
 echo -e "    ${GREEN}[+] Kanata service, binary, config, udev rule, user and groups removed.${NC}"
 
 # ===========================================================================
+# GNOME Shell extensions
+# ===========================================================================
+# Keep in sync with populate.sh
+GNOME_EXTENSIONS=(
+    blur-my-shell@aunetx
+    just-perfection-desktop@just-perfection
+    multi-monitors-bar@frederykabryan
+    perfect-fit@ryliov.work.com
+    focus-changer@heartmire
+    focus@scaryrawr.github.io
+)
+echo -e "${BLUE}[*] Removing GNOME Shell extensions...${NC}"
+if command -v gnome-extensions &> /dev/null; then
+    for uuid in "${GNOME_EXTENSIONS[@]}"; do
+        gnome-extensions disable "$uuid" 2> /dev/null
+        gnome-extensions uninstall "$uuid" 2> /dev/null
+    done
+    # Reset every dconf directory that populate.sh loaded settings into
+    grep -oE '^\[[^]/]+' "$DOTFILES_DIR/gnome/extensions.dconf" | tr -d '[' | sort -u \
+        | while IFS= read -r dir; do
+            dconf reset -f "/org/gnome/shell/extensions/${dir}/"
+        done
+    echo -e "    ${GREEN}[+] Extensions uninstalled and their settings reset.${NC}"
+else
+    echo -e "    ${YELLOW}[!] gnome-extensions not available — skipping.${NC}"
+fi
+
+# ===========================================================================
 # WezTerm apt repository
 # ===========================================================================
 echo -e "${BLUE}[*] Removing WezTerm apt repository...${NC}"

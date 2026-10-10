@@ -166,6 +166,63 @@ else
 fi
 
 # ===========================================================================
+# GNOME Shell extensions
+# ===========================================================================
+# Downloaded from extensions.gnome.org for the running shell version.
+# Settings live in gnome/extensions.dconf (save changes with
+# scripts/dump-gnome-extensions.sh). On Wayland the shell only loads newly
+# installed extensions after logging out and back in.
+GNOME_EXTENSIONS=(
+    blur-my-shell@aunetx
+    just-perfection-desktop@just-perfection
+    multi-monitors-bar@frederykabryan
+    perfect-fit@ryliov.work.com
+    focus-changer@heartmire
+    focus@scaryrawr.github.io
+)
+echo -e "${BLUE}[*] Checking for GNOME Shell extensions...${NC}"
+if ! command -v gnome-extensions &> /dev/null; then
+    echo -e "    ${YELLOW}[!] gnome-extensions not available — skipping (non-GNOME system?).${NC}"
+else
+    SHELL_VERSION=$(gnome-shell --version | grep -oE '[0-9]+' | head -n1)
+    INSTALLED_EXTENSIONS=$(gnome-extensions list)
+    for uuid in "${GNOME_EXTENSIONS[@]}"; do
+        if grep -qxF "$uuid" <<< "$INSTALLED_EXTENSIONS"; then
+            echo -e "    ${GREEN}[+] ${uuid} is already installed.${NC}"
+            continue
+        fi
+        echo -e "    [>] Installing ${uuid}..."
+        tmp=$(mktemp -d)
+        if curl -fsSLo "$tmp/extension.zip" \
+            "https://extensions.gnome.org/download-extension/${uuid}.shell-extension.zip?shell_version=${SHELL_VERSION}"; then
+            gnome-extensions install --force "$tmp/extension.zip"
+        else
+            echo -e "    ${RED}[!] No release of ${uuid} for GNOME ${SHELL_VERSION}. Skipping.${NC}"
+        fi
+        rm -rf "$tmp"
+    done
+
+    # gnome-extensions enable only knows extensions the running shell has
+    # loaded, so add them to the enabled list directly
+    enabled=$(gsettings get org.gnome.shell enabled-extensions)
+    enabled=${enabled#@as }
+    for uuid in "${GNOME_EXTENSIONS[@]}"; do
+        [[ "$enabled" == *"'${uuid}'"* ]] && continue
+        if [[ "$enabled" == "[]" ]]; then
+            enabled="['${uuid}']"
+        else
+            enabled="${enabled%]}, '${uuid}']"
+        fi
+    done
+    gsettings set org.gnome.shell enabled-extensions "$enabled"
+    gsettings set org.gnome.shell disable-user-extensions false
+
+    dconf load /org/gnome/shell/extensions/ < "$DOTFILES_DIR/gnome/extensions.dconf"
+    echo -e "    ${GREEN}[+] Extensions enabled and settings loaded.${NC}"
+    echo -e "    ${YELLOW}[!] Log out and back in to load newly installed extensions.${NC}"
+fi
+
+# ===========================================================================
 # Tmux keybind conflict check
 # ===========================================================================
 echo -e "${BLUE}[*] Checking for system keybind conflicts with tmux...${NC}"

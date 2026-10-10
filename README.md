@@ -23,6 +23,11 @@ Every top-level directory is a [GNU Stow](https://www.gnu.org/software/stow/) pa
 
 `scripts/` holds helper scripts that are not linked anywhere.
 
+`gnome/extensions.dconf` holds the GNOME Shell extension settings. It is not a stow package:
+`populate.sh` loads it into dconf. After changing an extension's settings, save them back with
+`scripts/dump-gnome-extensions.sh`. The extensions themselves are listed in `GNOME_EXTENSIONS`
+in both `populate.sh` and `unpopulate.sh`.
+
 To add a new config, e.g. for `foo` at `~/.config/foo/foo.conf`, create
 `foo/.config/foo/foo.conf` and add `foo` to `STOW_PACKAGES` in both `populate.sh` and `unpopulate.sh`.
 
@@ -37,3 +42,4 @@ Packages are stowed with `--no-folding`, so only files are symlinked and directo
 - Installs the latest stable Neovim to `~/.local/opt/nvim`, linked to `~/.local/bin/nvim`
   (update with `./populate.sh --update-nvim`)
 - Installs WezTerm and Kanata
+- Installs and enables the GNOME Shell extensions and loads their settings
