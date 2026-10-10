@@ -1,5 +1,9 @@
 {
   "plugins": {
+    "nvim-treesitter": {
+      "rev": "1a4f47b03dfe92d28de7d5654c67327ef008c9e6",
+      "src": "https://github.com/nvim-treesitter/nvim-treesitter"
+    },
     "tokyonight.nvim": {
       "rev": "cdc07ac78467a233fd62c493de29a17e0cf2b2b6",
       "src": "https://github.com/folke/tokyonight.nvim"

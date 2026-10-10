@@ -25,5 +25,5 @@ vim.g.maplocalleader = " "
 
 require("config.opts")
 require("config.keys")
-require("config.autocmds")
+require("config.autocmds") -- before plugins: the PackChanged hook must exist before vim.pack.add()
 require("config.plugins")

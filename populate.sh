@@ -1,7 +1,8 @@
 #!/bin/bash
 
-# Usage: ./populate.sh [--update-nvim]
-#   --update-nvim   replace the installed Neovim with the latest stable release
+# Usage: ./populate.sh [--update]
+#   --update   replace the installed Neovim and tree-sitter CLI with their
+#              latest releases
 
 # Exit immediately if a command exits with a non-zero status
 set -e
@@ -20,8 +21,8 @@ cd "$DOTFILES_DIR"
 # Stow packages: each top-level directory mirrors $HOME
 STOW_PACKAGES=(zsh nvim tmux wezterm kanata code)
 
-UPDATE_NVIM=false
-[[ "$1" == "--update-nvim" ]] && UPDATE_NVIM=true
+UPDATE=false
+[[ "$1" == "--update" ]] && UPDATE=true
 
 echo -e "${BLUE}==========================================${NC}"
 echo -e "${BLUE} [*] Bootstrapping Environment Setup${NC}"
@@ -30,7 +31,7 @@ echo -e "${BLUE}==========================================${NC}"
 # ===========================================================================
 # apt packages
 # ===========================================================================
-# build-essential + tree-sitter-cli: nvim-treesitter compiles its parsers
+# build-essential: nvim-treesitter compiles its parsers with the C compiler
 # wl-clipboard: clipboard for tmux and Neovim ("unnamedplus") on Wayland
 echo -e "${BLUE}[>] Installing apt packages...${NC}"
 sudo apt update -q
@@ -46,10 +47,6 @@ sudo apt install -y \
     bat \
     zoxide \
     wl-clipboard
-# tree-sitter-cli recommends nodejs + node-gyp (~70 packages), which are only
-# needed to generate parsers from grammar.js. nvim-treesitter generates from
-# grammar.json with the native runtime, so skip the recommends.
-sudo apt install -y --no-install-recommends tree-sitter-cli
 echo -e "    ${GREEN}[+] apt packages installed.${NC}"
 
 # ===========================================================================
@@ -109,7 +106,7 @@ fi
 # Neovim (latest stable release tarball, in userspace)
 # ===========================================================================
 # Unpacked to ~/.local/opt/nvim and linked into ~/.local/bin. No sudo needed;
-# update with: ./populate.sh --update-nvim
+# update with: ./populate.sh --update
 NVIM_DIR="$HOME/.local/opt/nvim"
 NVIM_LINK="$HOME/.local/bin/nvim"
 
@@ -141,11 +138,54 @@ echo -e "${BLUE}[*] Checking for Neovim...${NC}"
 if [ ! -x "$NVIM_DIR/bin/nvim" ]; then
     echo -e "    [>] Neovim not found. Installing latest stable release..."
     _install_latest_nvim
-elif $UPDATE_NVIM; then
+elif $UPDATE; then
     echo -e "    [>] Updating Neovim to the latest stable release..."
     _install_latest_nvim
 else
-    echo -e "    ${GREEN}[+] $("$NVIM_DIR/bin/nvim" --version | head -n1) is already installed (update with --update-nvim).${NC}"
+    echo -e "    ${GREEN}[+] $("$NVIM_DIR/bin/nvim" --version | head -n1) is already installed (update with --update).${NC}"
+fi
+
+# ===========================================================================
+# tree-sitter CLI (latest release binary, in userspace)
+# ===========================================================================
+# nvim-treesitter uses it to compile parsers and needs a newer version than
+# apt has. The release is a single gzipped binary, no Node or Rust needed.
+# update with: ./populate.sh --update
+TS_BIN="$HOME/.local/bin/tree-sitter"
+
+_install_latest_tree_sitter() {
+    local arch
+    case "$(uname -m)" in
+        x86_64|amd64)  arch="x64" ;;
+        aarch64|arm64) arch="arm64" ;;
+        *)
+            echo -e "    ${RED}[!] Unsupported architecture $(uname -m) for tree-sitter. Skipping.${NC}"
+            return 0
+            ;;
+    esac
+
+    # Release asset: tree-sitter-linux-${arch}.gz
+    local tmp
+    tmp=$(mktemp -d)
+    curl -fLo "$tmp/tree-sitter.gz" \
+      "https://github.com/tree-sitter/tree-sitter/releases/latest/download/tree-sitter-linux-${arch}.gz"
+    mkdir -p "$HOME/.local/bin"
+    gunzip -c "$tmp/tree-sitter.gz" > "$tmp/tree-sitter"
+    chmod +x "$tmp/tree-sitter"
+    mv "$tmp/tree-sitter" "$TS_BIN"
+    rm -rf "$tmp"
+    echo -e "    ${GREEN}[+] $("$TS_BIN" --version) installed to ${TS_BIN}.${NC}"
+}
+
+echo -e "${BLUE}[*] Checking for tree-sitter CLI...${NC}"
+if [ ! -x "$TS_BIN" ]; then
+    echo -e "    [>] tree-sitter not found. Installing latest release..."
+    _install_latest_tree_sitter
+elif $UPDATE; then
+    echo -e "    [>] Updating tree-sitter to the latest release..."
+    _install_latest_tree_sitter
+else
+    echo -e "    ${GREEN}[+] $("$TS_BIN" --version) is already installed (update with --update).${NC}"
 fi
 
 # ===========================================================================

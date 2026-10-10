@@ -40,6 +40,6 @@ Packages are stowed with `--no-folding`, so only files are symlinked and directo
 - Links all packages into `$HOME`
 - Clones the zsh plugins into `~/.local/share/zsh/plugins` (update them with `zsh-plugins-update`)
 - Installs the latest stable Neovim to `~/.local/opt/nvim`, linked to `~/.local/bin/nvim`
-  (update with `./populate.sh --update-nvim`)
+  (update with `./populate.sh --update`)
 - Installs WezTerm and Kanata
 - Installs and enables the GNOME Shell extensions and loads their settings

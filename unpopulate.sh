@@ -107,6 +107,13 @@ rmdir --ignore-fail-on-non-empty "$HOME/.local/opt" 2> /dev/null
 echo -e "    ${GREEN}[+] ${NVIM_DIR} removed.${NC}"
 
 # ===========================================================================
+# tree-sitter CLI
+# ===========================================================================
+echo -e "${BLUE}[*] Removing tree-sitter CLI...${NC}"
+rm -f "$HOME/.local/bin/tree-sitter"
+echo -e "    ${GREEN}[+] ~/.local/bin/tree-sitter removed.${NC}"
+
+# ===========================================================================
 # Zsh plugins
 # ===========================================================================
 echo -e "${BLUE}[*] Removing zsh plugins...${NC}"
@@ -187,7 +194,7 @@ fi
 # would drag along packages outside this list — those were clearly
 # pre-existing and something else on the system depends on them.
 PACKAGES=(
-    stow curl build-essential tree-sitter-cli
+    stow curl build-essential tree-sitter-cli  # tree-sitter-cli: older installs
     zsh tmux fzf ripgrep lsd bat zoxide wl-clipboard
     wezterm-nightly
 )

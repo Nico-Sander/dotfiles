@@ -1,8 +1,11 @@
 vim.pack.add({
   "https://github.com/folke/tokyonight.nvim", -- TokyoNight Colorscheme
+  "https://github.com/nvim-treesitter/nvim-treesitter", -- Parser installer (highlighting itself is built in)
 })
 
+----------------------------------------------------------------------------------
 -- Tokyonight colorscheme with custom colors to match wezterm
+----------------------------------------------------------------------------------
 require("tokyonight").setup({
   style = "night",
   on_colors = function(colors)
@@ -17,4 +20,11 @@ require("tokyonight").setup({
 })
 
 vim.cmd.colorscheme("tokyonight")
+
+----------------------------------------------------------------------------------
+-- Treesitter
+----------------------------------------------------------------------------------
+require("nvim-treesitter").install {
+  "rust",
+}
 
