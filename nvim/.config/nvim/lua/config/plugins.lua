@@ -1,5 +1,5 @@
 vim.pack.add({
-  "https://github.com/folke/tokyonight.nvim",
+  "https://github.com/folke/tokyonight.nvim", -- TokyoNight Colorscheme
 })
 
 -- Tokyonight colorscheme with custom colors to match wezterm
@@ -17,3 +17,4 @@ require("tokyonight").setup({
 })
 
 vim.cmd.colorscheme("tokyonight")
+

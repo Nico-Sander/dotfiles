@@ -51,11 +51,45 @@ vim.keymap.set("n", "<C-Down>", "<cmd>resize -2<CR>", { desc = "shorter window" 
 vim.keymap.set("n", "<C-Left>", "<cmd>vertical resize -2<CR>", { desc = "narrower window" })
 vim.keymap.set("n", "<C-Right>", "<cmd>vertical resize +2<CR>", { desc = "wider window" })
 
--- move between panes (To be integrated with Tmux panes)
-vim.keymap.set("n", "<C-h>", "<C-w>h", { desc = "move to the pane on the left" })
+-- Ctrl+h/j/k/l move between Nvim windows and, at the edge, on to the
+-- neighbouring tmux pane. The tmux side (tmux.conf) forwards these keys to
+-- the pane when Nvim runs in it, and selects the pane directly otherwise.
+-- $TMUX is set inside tmux, $TMUX_PANE is the id of our pane (like %3).
+local tmux_dir = { h = "L", j = "D", k = "U", l = "R" } -- for select-pane -L/-D/-U/-R
 
-vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = "move to the pane on the right" })
+local function navigate(dir)
+  local win_id_before = vim.api.nvim_get_current_win()
+  vim.cmd.wincmd(dir)
+  if win_id_before == vim.api.nvim_get_current_win() and vim.env.TMUX then
+    -- At edge -> next tmux pane in dir
+    vim.system({ "tmux", "select-pane", "-" .. tmux_dir[dir], "-t", vim.env.TMUX_PANE })
+  end
+end
 
-vim.keymap.set("n", "<C-k>", "<C-w>k", { desc = "move to the pane above" })
+vim.keymap.set("n", "<C-h>", function() navigate("h") end, { desc = "window/pane left" })
+vim.keymap.set("n", "<C-j>", function() navigate("j") end, { desc = "window/pane below" })
+vim.keymap.set("n", "<C-k>", function() navigate("k") end, { desc = "window/pane above" })
+vim.keymap.set("n", "<C-l>", function() navigate("l") end, { desc = "window/pane right" })
 
-vim.keymap.set("n", "<C-j>", "<C-w>j", { desc = "move to the pane below" })
+-- Ctrl+\ jumps back to the previous window or pane, like it does in tmux.
+-- If focus last arrived from another tmux pane (FocusGained, sent by tmux
+-- with focus-events on), go back there; after any window change inside Nvim
+-- (WinEnter), go back to the previous Nvim window.
+local came_from_tmux = false
+local nav_group = vim.api.nvim_create_augroup("tmux-nav", { clear = true })
+vim.api.nvim_create_autocmd("FocusGained", {
+  group = nav_group,
+  callback = function() came_from_tmux = true end,
+})
+vim.api.nvim_create_autocmd("WinEnter", {
+  group = nav_group,
+  callback = function() came_from_tmux = false end,
+})
+
+vim.keymap.set("n", "<C-\\>", function()
+  if vim.env.TMUX and came_from_tmux then
+    vim.system({ "tmux", "select-pane", "-l", "-t", vim.env.TMUX_PANE })
+  else
+    pcall(vim.cmd.wincmd, "p") -- fails quietly if there is no previous window
+  end
+end, { desc = "previous window/pane" })

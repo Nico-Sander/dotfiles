@@ -12,3 +12,12 @@ vim.api.nvim_create_autocmd("TextYankPost", {
     vim.hl.on_yank()
   end,
 })
+
+-- Disable automatic comments on new lines
+vim.api.nvim_create_autocmd("FileType", {
+  group = group,
+  desc = "disable auto-comment on new lines",
+  callback = function()
+    vim.opt_local.formatoptions:remove({ "r", "o" })
+  end,
+})
