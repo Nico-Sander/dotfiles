@@ -76,6 +76,11 @@ require("mini.diff").setup({
 })
 
 ----------------------------------------------------------------------------------
+-- Mini Trailspace
+----------------------------------------------------------------------------------
+require("mini.trailspace").setup({})
+
+----------------------------------------------------------------------------------
 -- Snacks
 ----------------------------------------------------------------------------------
 -- Only modules with enabled = true are active; the rest of snacks (explorer,
@@ -149,5 +154,10 @@ require("snacks").setup({
 
   scroll = { -- smooth scrolling
     enabled = true,
+  },
+
+  notifier = {
+    enabled = true,
+    timeout = 6000,
   },
 })

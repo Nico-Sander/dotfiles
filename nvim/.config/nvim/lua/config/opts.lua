@@ -82,7 +82,8 @@ vim.o.confirm = true -- :q on a changed buffer asks to save instead of failing
 -- LSP use it for hover highlights and git signs.
 vim.o.updatetime = 250
 
--- Show invisible characters: tabs, trailing spaces, non-breaking spaces,
+-- Show invisible characters: tabs, non-breaking spaces (trailing spaces are
+-- highlighted by mini.trailspace instead),
 -- and markers for text left/right of the window when wrap is off
 vim.o.list = true
-vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣", extends = "…", precedes = "…" }
+vim.opt.listchars = { tab = "» ", nbsp = "␣", extends = "…", precedes = "…" }
