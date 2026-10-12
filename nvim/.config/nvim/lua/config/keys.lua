@@ -93,3 +93,26 @@ vim.keymap.set("n", "<C-\\>", function()
     pcall(vim.cmd.wincmd, "p") -- fails quietly if there is no previous window
   end
 end, { desc = "previous window/pane" })
+
+-- Keep cursorline centered when scrolling
+vim.keymap.set("n", "<C-d>", "<C-d>zz", { desc = "move down in buffer with cursor centered" })
+vim.keymap.set("n", "<C-u>", "<C-u>zz", { desc = "move up in buffer with cursor centered" })
+
+-- Keep cursorline centered when scrolling through search results
+vim.keymap.set("n", "n", "nzzzv", { desc = "Next search results with cursor centered" })
+vim.keymap.set("n", "N", "Nzzzv", { desc = "Previous search results with cursor centered" })
+
+-- Mini Files
+vim.keymap.set("n", "<leader>-", function() MiniFiles.open() end, { desc = "Open mini file explorer in working directory" })
+vim.keymap.set("n", "-", function()
+  MiniFiles.open(vim.api.nvim_buf_get_name(0), false)
+  MiniFiles.reveal_cwd()
+end, { desc = "Open mini file explorer in dir of current file" })
+
+-- Snacks Pickers
+vim.keymap.set("n", "<leader>ff", function() Snacks.picker.files() end, { desc = "Find Files"} )
+vim.keymap.set("n", "<leader>fb", function() Snacks.picker.buffers() end, { desc = "Find Buffers"} )
+vim.keymap.set("n", "<leader>fg", function() Snacks.picker.grep() end, { desc = "Live Grep"} )
+vim.keymap.set("n", "<leader>fh", function() Snacks.picker.help() end, { desc = "Help Picker"} )
+vim.keymap.set("n", "<leader>fd", function() Snacks.picker.diagnostics() end, { desc = "Diagnostics Picker"})
+vim.keymap.set("n", "<leader>fk", function() Snacks.picker.keymaps() end, { desc = "Keymaps Picker"})

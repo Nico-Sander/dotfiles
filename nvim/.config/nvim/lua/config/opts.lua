@@ -1,5 +1,9 @@
 -- Options (:h option-list, or :h 'optionname' for one)
 
+-- ui2: redesigned cmdline and messages (built in, experimental since 0.12,
+-- :h ui2). Highlights the cmdline while typing, no "Press ENTER" prompts.
+require("vim._core.ui2").enable()
+
 -- y/d/c/p use the system clipboard (via wl-copy/wl-paste, :checkhealth
 -- provider.clipboard). Scheduled because detecting the clipboard tool takes
 -- a few ms; this way it happens after the first screen is drawn.

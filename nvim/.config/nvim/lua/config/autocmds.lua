@@ -62,3 +62,15 @@ vim.api.nvim_create_autocmd("PackChanged", {
   desc = "update tree-sitter parsers on tree-sitter plugin update",
   callback = hooks,
 })
+
+----------------------------------------------------------------------------------
+-- LSP-integrated file renaming from within mini.files (:h snacks-rename)
+----------------------------------------------------------------------------------
+vim.api.nvim_create_autocmd("User", {
+  group = group,
+  pattern = "MiniFilesActionRename",
+  desc = "Lets LSP know that a file has been renamed from mini.files",
+  callback = function(event)
+    Snacks.rename.on_rename_file(event.data.from, event.data.to)
+  end,
+})
