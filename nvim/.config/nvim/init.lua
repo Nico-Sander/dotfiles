@@ -6,6 +6,8 @@
 --   lua/config/keys.lua   keymaps
 --   lua/config/autocmds.lua  autocommands
 --   lua/config/plugins.lua   plugins (vim.pack) and their setup
+--   lua/config/lsp.lua    enables the language servers
+--   lsp/<name>.lua        one config per language server
 --   nvim-pack-lock.json   plugin revisions, written by vim.pack (commit it)
 -- Modules live in lua/config/ (require("config.x")) rather than directly in
 -- lua/, because all lua/ dirs on the runtimepath share one namespace: a
@@ -27,3 +29,4 @@ require("config.opts")
 require("config.keys")
 require("config.autocmds") -- before plugins: the PackChanged hook must exist before vim.pack.add()
 require("config.plugins")
+require("config.lsp")

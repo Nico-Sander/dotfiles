@@ -115,7 +115,7 @@ vim.keymap.set("n", "<leader>fb", function() Snacks.picker.buffers() end, { desc
 vim.keymap.set("n", "<leader>fg", function() Snacks.picker.grep({ layout = { preset = "ivy" } }) end, { desc = "Live Grep"} )
 vim.keymap.set("n", "<leader>/", function() Snacks.picker.lines() end, { desc = "Search lines in current buffer"} )
 vim.keymap.set("n", "<leader>fh", function() Snacks.picker.help() end, { desc = "Help Picker"} )
-vim.keymap.set("n", "<leader>fd", function() Snacks.picker.diagnostics({ layout = { preset = "ivy" } }) end, { desc = "Diagnostics Picker"})
+vim.keymap.set("n", "<leader>fd", function() Snacks.picker.diagnostics({ layout = { preset = "ivy_split" } }) end, { desc = "Diagnostics Picker"})
 vim.keymap.set("n", "<leader>fk", function() Snacks.picker.keymaps() end, { desc = "Keymaps Picker"})
 
 -- Formatting
@@ -123,3 +123,11 @@ vim.keymap.set("n", "<leader>ct", function()
   MiniTrailspace.trim()
   MiniTrailspace.trim_last_lines()
 end, { desc = "Trim trailing whitespace and trailing empty lines"})
+
+-- Diagnostics
+vim.keymap.set("n", "<leader>vt", function()
+  -- config() without arguments returns the current config; it's typed as
+  -- "maybe nil" (it returns nothing when setting), hence the `or {}`
+  local config = vim.diagnostic.config() or {}
+  vim.diagnostic.config({ virtual_text = not config.virtual_text })
+end, { desc = "Toggle diagnostic virtual text" })
