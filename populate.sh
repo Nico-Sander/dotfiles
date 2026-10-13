@@ -1,8 +1,9 @@
 #!/bin/bash
 
 # Usage: ./populate.sh [--update]
-#   --update   replace the installed Neovim and tree-sitter CLI with their
-#              latest releases
+#   --update   replace the installed Neovim, tree-sitter CLI,
+#              lua-language-server and uv with their latest releases and
+#              upgrade the uv tools
 
 # Exit immediately if a command exits with a non-zero status
 set -e
@@ -187,6 +188,115 @@ elif $UPDATE; then
 else
     echo -e "    ${GREEN}[+] $("$TS_BIN" --version) is already installed (update with --update).${NC}"
 fi
+
+# ===========================================================================
+# lua-language-server (latest release tarball, in userspace)
+# ===========================================================================
+# LSP for Lua (used for the Neovim config). Unpacked to
+# ~/.local/opt/lua-language-server and linked into ~/.local/bin; the binary
+# finds its scripts relative to its real location, so the symlink works.
+# update with: ./populate.sh --update
+LLS_DIR="$HOME/.local/opt/lua-language-server"
+LLS_LINK="$HOME/.local/bin/lua-language-server"
+
+_install_latest_lua_ls() {
+    local arch
+    case "$(uname -m)" in
+        x86_64|amd64)  arch="x64" ;;
+        aarch64|arm64) arch="arm64" ;;
+        *)
+            echo -e "    ${RED}[!] Unsupported architecture $(uname -m) for lua-language-server. Skipping.${NC}"
+            return 0
+            ;;
+    esac
+
+    # The asset name contains the version, so resolve the latest tag first:
+    # /releases/latest redirects to /releases/tag/<version>
+    local latest_tag
+    latest_tag=$(curl -fsSLI -o /dev/null -w '%{url_effective}' https://github.com/LuaLS/lua-language-server/releases/latest | awk -F/ '{print $NF}')
+
+    local tmp
+    tmp=$(mktemp -d)
+    curl -fLo "$tmp/lua-language-server.tar.gz" \
+        "https://github.com/LuaLS/lua-language-server/releases/download/${latest_tag}/lua-language-server-${latest_tag}-linux-${arch}.tar.gz"
+    # The tarball has no top-level folder, so unpack into one of our own
+    mkdir -p "$tmp/extract"
+    tar -xzf "$tmp/lua-language-server.tar.gz" -C "$tmp/extract"
+    rm -rf "$LLS_DIR"
+    mkdir -p "$(dirname "$LLS_DIR")" "$(dirname "$LLS_LINK")"
+    mv "$tmp/extract" "$LLS_DIR"
+    rm -rf "$tmp"
+    ln -sfn "$LLS_DIR/bin/lua-language-server" "$LLS_LINK"
+    echo -e "    ${GREEN}[+] lua-language-server $("$LLS_LINK" --version) installed to ${LLS_DIR}.${NC}"
+}
+
+echo -e "${BLUE}[*] Checking for lua-language-server...${NC}"
+if [ ! -x "$LLS_DIR/bin/lua-language-server" ]; then
+    echo -e "    [>] lua-language-server not found. Installing latest release..."
+    _install_latest_lua_ls
+elif $UPDATE; then
+    echo -e "    [>] Updating lua-language-server to the latest release..."
+    _install_latest_lua_ls
+else
+    echo -e "    ${GREEN}[+] lua-language-server $("$LLS_LINK" --version) is already installed (update with --update).${NC}"
+fi
+
+# ===========================================================================
+# uv + Python tools (latest release binary, in userspace)
+# ===========================================================================
+# uv installs Python CLI tools into isolated venvs under ~/.local/share/uv/tools
+# and links them into ~/.local/bin. Used for the Python language servers
+# (basedpyright brings its own Node, no system Node needed).
+# update with: ./populate.sh --update (uv itself and all tools)
+UV_BIN="$HOME/.local/bin/uv"
+UVX_BIN="$HOME/.local/bin/uvx"
+UV_TOOLS=(basedpyright ruff)
+
+_install_latest_uv() {
+    local arch
+    case "$(uname -m)" in
+        x86_64|amd64)  arch="x86_64" ;;
+        aarch64|arm64) arch="aarch64" ;;
+        *)
+            echo -e "    ${RED}[!] Unsupported architecture $(uname -m) for uv. Skipping.${NC}"
+            return 0
+            ;;
+    esac
+
+    local tmp
+    tmp=$(mktemp -d)
+    curl -fLo "$tmp/uv.tar.gz" \
+        "https://github.com/astral-sh/uv/releases/latest/download/uv-${arch}-unknown-linux-gnu.tar.gz"
+    tar -xzf "$tmp/uv.tar.gz" -C "$tmp"
+    mkdir -p "$HOME/.local/bin"
+    mv "$tmp/uv-${arch}-unknown-linux-gnu/uv" "$UV_BIN"
+    mv "$tmp/uv-${arch}-unknown-linux-gnu/uvx" "$UVX_BIN"
+    rm -rf "$tmp"
+    echo -e "    ${GREEN}[+] $("$UV_BIN" --version) installed to ${UV_BIN}.${NC}"
+}
+
+echo -e "${BLUE}[*] Checking for uv...${NC}"
+if [ ! -x "$UV_BIN" ]; then
+    echo -e "    [>] uv not found. Installing latest release..."
+    _install_latest_uv
+elif $UPDATE; then
+    echo -e "    [>] Updating uv to the latest release..."
+    _install_latest_uv
+else
+    echo -e "    ${GREEN}[+] $("$UV_BIN" --version) is already installed (update with --update).${NC}"
+fi
+
+# uv tool install is a no-op for tools that are already installed, so this
+# also picks up tools added to UV_TOOLS later
+echo -e "${BLUE}[*] Checking for uv tools (${UV_TOOLS[*]})...${NC}"
+for tool in "${UV_TOOLS[@]}"; do
+    "$UV_BIN" tool install --quiet "$tool"
+done
+if $UPDATE; then
+    echo -e "    [>] Upgrading uv tools..."
+    "$UV_BIN" tool upgrade --all
+fi
+echo -e "    ${GREEN}[+] uv tools ready (update with --update).${NC}"
 
 # ===========================================================================
 # WezTerm (nightly)

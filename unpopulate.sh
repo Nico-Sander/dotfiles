@@ -114,6 +114,33 @@ rm -f "$HOME/.local/bin/tree-sitter"
 echo -e "    ${GREEN}[+] ~/.local/bin/tree-sitter removed.${NC}"
 
 # ===========================================================================
+# lua-language-server
+# ===========================================================================
+echo -e "${BLUE}[*] Removing lua-language-server...${NC}"
+LLS_DIR="$HOME/.local/opt/lua-language-server"
+LLS_LINK="$HOME/.local/bin/lua-language-server"
+if [ -L "$LLS_LINK" ] && [[ "$(readlink "$LLS_LINK")" == "$LLS_DIR/"* ]]; then
+    rm -f "$LLS_LINK"
+fi
+rm -rf "$LLS_DIR"
+rmdir --ignore-fail-on-non-empty "$HOME/.local/opt" 2> /dev/null
+echo -e "    ${GREEN}[+] ${LLS_DIR} removed.${NC}"
+
+# ===========================================================================
+# uv + Python tools
+# ===========================================================================
+# Tools first: uninstalling them needs uv, and also removes their links
+# from ~/.local/bin
+echo -e "${BLUE}[*] Removing uv and its tools...${NC}"
+UV_BIN="$HOME/.local/bin/uv"
+if [ -x "$UV_BIN" ]; then
+    "$UV_BIN" tool uninstall --all
+fi
+rm -f "$UV_BIN" "$HOME/.local/bin/uvx"
+rm -rf "${XDG_DATA_HOME:-$HOME/.local/share}/uv"
+echo -e "    ${GREEN}[+] uv, uvx and all uv tools (basedpyright, ruff, ...) removed.${NC}"
+
+# ===========================================================================
 # Zsh plugins
 # ===========================================================================
 echo -e "${BLUE}[*] Removing zsh plugins...${NC}"
@@ -168,6 +195,7 @@ RUNTIME_PATHS=(
     "$HOME/.local/state/nvim"
     "$HOME/.cache/nvim"
     "$HOME/.local/share/zoxide"
+    "$HOME/.cache/uv"
 )
 EXISTING_RUNTIME_PATHS=()
 for p in "${RUNTIME_PATHS[@]}"; do
