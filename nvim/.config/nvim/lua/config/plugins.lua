@@ -17,7 +17,14 @@ require("tokyonight").setup({
   -- c:  the palette, including the on_colors changes above (c.blue, c.comment, ...)
   on_highlights = function(hl, c)
     hl.StatusLine.fg = c.yellow
-    hl.WinSeparator = { fg = c.yellow } -- split lines (horizontal too, with laststatus=3)
+    -- Inactive windows get a darker background (NormalNC: "not current"),
+    -- nvim switches between Normal and NormalNC on focus change
+    local inactive = "#111219"
+    hl.NormalNC.bg = inactive
+    hl.SignColumn.bg = c.none -- follow the window's bg instead of a fixed one
+    -- Split lines (horizontal too, with laststatus=3). Without a bg they'd use
+    -- Normal's, a bright strip next to the dimmed windows
+    hl.WinSeparator = { fg = c.yellow, bg = inactive }
   end,
 })
 
