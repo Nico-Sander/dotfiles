@@ -94,6 +94,40 @@ require("mini.diff").setup({
 require("mini.trailspace").setup({})
 
 ----------------------------------------------------------------------------------
+-- Mini Clue
+----------------------------------------------------------------------------------
+local miniclue = require("mini.clue")
+miniclue.setup({
+  -- Keys that open the clue window. Each one gets a mapping of mini.clue's
+  -- own, which then reads the following keys itself
+  triggers = {
+    -- Leader triggers
+    { mode = { "n", "x" }, keys = "<leader>" },
+    -- "[" and "]"
+    { mode = "n",          keys = "[" },
+    { mode = "n",          keys = "]" },
+    -- "g"
+    { mode = { "n", "x" }, keys = "g" },
+    -- Marks
+    { mode = { "n", "x" }, keys = "'" },
+    { mode = { "n", "x" }, keys = "`" },
+    -- Window commands
+    { mode = "n",          keys = "<C-w>" },
+  },
+  -- The window lists mappings (with their desc) on its own. Built-in
+  -- commands like <C-w>v or gg aren't mappings, so they need these lists
+  clues = {
+    miniclue.gen_clues.g(),
+    miniclue.gen_clues.marks(),
+    miniclue.gen_clues.windows(),
+  },
+  window = {
+    delay = 500,
+    config = { width = 50 }, -- columns (default 30, "auto" fits the longest description)
+  },
+})
+
+----------------------------------------------------------------------------------
 -- Snacks
 ----------------------------------------------------------------------------------
 -- Only modules with enabled = true are active; the rest of snacks (explorer,
