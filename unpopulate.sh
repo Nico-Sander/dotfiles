@@ -224,7 +224,7 @@ fi
 PACKAGES=(
     stow curl build-essential tree-sitter-cli  # tree-sitter-cli: older installs
     zsh tmux fzf ripgrep lsd bat zoxide wl-clipboard
-    wezterm-nightly
+    wezterm-nightly shfmt
 )
 
 _is_installed() {
