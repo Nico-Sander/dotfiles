@@ -136,16 +136,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
   group = group,
   desc = "Buffer-local LSP features and keymaps",
   callback = function(ev)
-    local client = vim.lsp.get_client_by_id(ev.data.client_id)
-    if not client then
-      return
-    end
-
-    -- Inlay hints
-    if client:supports_method("textDocument/inlayHint") then
-      vim.lsp.inlay_hint.enable(true, { bufnr = ev.buf })
-    end
-
     -- Snacks pickers instead of the quickfix list (grr/gri/grt replace the
     -- built-in defaults). buf = ev.buf makes them buffer-local.
     local function map(lhs, picker, desc)

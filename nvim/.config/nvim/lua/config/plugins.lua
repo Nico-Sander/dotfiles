@@ -1,8 +1,10 @@
 vim.pack.add({
-  "https://github.com/folke/tokyonight.nvim", -- TokyoNight Colorscheme
-  "https://github.com/nvim-treesitter/nvim-treesitter", -- Parser installer (highlighting itself is built in)
-  "https://github.com/nvim-mini/mini.nvim", -- Collection of modules (files, surround, pairs, diff, ...)
-  "https://github.com/folke/snacks.nvim", -- Picker, indent guides, vim.ui.input, smooth scrolling
+  "https://github.com/folke/tokyonight.nvim",                                          -- TokyoNight Colorscheme
+  "https://github.com/nvim-treesitter/nvim-treesitter",                                -- Parser installer (highlighting itself is built in)
+  "https://github.com/nvim-mini/mini.nvim",                                            -- Collection of modules (files, surround, pairs, diff, ...)
+  "https://github.com/folke/snacks.nvim",                                              -- Picker, indent guides, vim.ui.input, smooth scrolling
+  "https://github.com/stevearc/conform.nvim",                                          -- Formatting
+  { src = "https://github.com/saghen/blink.cmp", version = vim.version.range("1.*") }, -- Completions
 })
 
 ----------------------------------------------------------------------------------
@@ -41,7 +43,7 @@ require("nvim-treesitter").install {
 -- Mini Files
 ----------------------------------------------------------------------------------
 require("mini.files").setup({
-  mappings = {  -- Mappings only apply when plugin runs, so they stay defined here
+  mappings = { -- Mappings only apply when plugin runs, so they stay defined here
     go_in = "L",
     go_in_plus = "<CR>",
     go_out = "-",
@@ -52,7 +54,7 @@ require("mini.files").setup({
 ----------------------------------------------------------------------------------
 -- Mini Cmdline Completion
 ----------------------------------------------------------------------------------
-require("mini.cmdline").setup()
+-- require("mini.cmdline").setup()
 
 ----------------------------------------------------------------------------------
 -- Mini Surround
@@ -166,5 +168,51 @@ require("snacks").setup({
   notifier = {
     enabled = true,
     timeout = 6000,
+  },
+})
+
+----------------------------------------------------------------------------------
+-- Conform Formatting
+----------------------------------------------------------------------------------
+require("conform").setup({
+  formatters_by_ft = {
+    -- for available formatters see :h conform-formatters
+    python = { "ruff_organize_imports", "ruff_format" }, -- multiple formatters are run sequentially
+    rust = { "rustfmt" },
+    bash = { "shfmt" },
+    sh = { "shfmt" },
+  },
+
+  -- If this is set, Conform will run the formatter on save.
+  -- It will pass the table to conform.format().
+  -- This can also be a function that returns the table.
+  format_on_save = {
+    -- I recommend these options. See :help conform.format for details.
+    lsp_format = "fallback",
+    timeout_ms = 500,
+  },
+})
+
+----------------------------------------------------------------------------------
+-- Blink Completions
+----------------------------------------------------------------------------------
+require("blink.cmp").setup({
+  -- Completion config for Buffer
+  keymap = { preset = "default" },
+  completion = {
+    documentation = { auto_show = true },
+    ghost_text = { enabled = true },
+    list = { selection = { preselect = false, auto_insert = false } },
+  },
+  signature = { enabled = true },
+
+  -- Completion config for Cmdline
+  cmdline = {
+    enabled = true,
+    completion = {
+      list = { selection = { preselect = false, auto_insert = false } },
+      menu = { auto_show = true },
+      ghost_text = { enabled = true },
+    },
   },
 })

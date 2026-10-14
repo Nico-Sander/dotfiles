@@ -23,6 +23,15 @@ return {
         checkThirdParty = false, -- no "configure your workspace?" prompt
       },
       hint = { enable = true }, -- send inlay hints (off by default in lua_ls)
+      -- Built-in formatter (EmmyLuaCodeStyle), used by conform's lsp_format
+      -- fallback. Options: https://github.com/CppCXY/EmmyLuaCodeStyle/tree/master/docs
+      -- Values must be strings. An .editorconfig in the project overrides these.
+      format = {
+        defaultConfig = {
+          continuation_indent = "2", -- default 4
+          max_line_length = "150", -- default 120, longer lines get wrapped
+        },
+      },
     },
   },
 }

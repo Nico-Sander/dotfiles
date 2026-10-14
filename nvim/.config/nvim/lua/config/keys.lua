@@ -110,19 +110,25 @@ vim.keymap.set("n", "-", function()
 end, { desc = "Open mini file explorer in dir of current file" })
 
 -- Snacks Pickers
-vim.keymap.set("n", "<leader>ff", function() Snacks.picker.files() end, { desc = "Find Files"} )
-vim.keymap.set("n", "<leader>fb", function() Snacks.picker.buffers() end, { desc = "Find Buffers"} )
-vim.keymap.set("n", "<leader>fg", function() Snacks.picker.grep({ layout = { preset = "ivy" } }) end, { desc = "Live Grep"} )
-vim.keymap.set("n", "<leader>/", function() Snacks.picker.lines() end, { desc = "Search lines in current buffer"} )
-vim.keymap.set("n", "<leader>fh", function() Snacks.picker.help() end, { desc = "Help Picker"} )
-vim.keymap.set("n", "<leader>fd", function() Snacks.picker.diagnostics({ layout = { preset = "ivy_split" } }) end, { desc = "Diagnostics Picker"})
-vim.keymap.set("n", "<leader>fk", function() Snacks.picker.keymaps() end, { desc = "Keymaps Picker"})
+vim.keymap.set("n", "<leader>ff", function() Snacks.picker.files() end, { desc = "Find Files" })
+vim.keymap.set("n", "<leader>fb", function() Snacks.picker.buffers() end, { desc = "Find Buffers" })
+vim.keymap.set("n", "<leader>fg", function() Snacks.picker.grep({ layout = { preset = "ivy" } }) end, { desc = "Live Grep" })
+vim.keymap.set("n", "<leader>/", function() Snacks.picker.lines() end, { desc = "Search lines in current buffer" })
+vim.keymap.set("n", "<leader>fh", function() Snacks.picker.help() end, { desc = "Help Picker" })
+vim.keymap.set("n", "<leader>fd", function() Snacks.picker.diagnostics({ layout = { preset = "ivy_split" } }) end, { desc = "Diagnostics Picker" })
+vim.keymap.set("n", "<leader>fk", function() Snacks.picker.keymaps() end, { desc = "Keymaps Picker" })
 
 -- Formatting
 vim.keymap.set("n", "<leader>ct", function()
   MiniTrailspace.trim()
   MiniTrailspace.trim_last_lines()
-end, { desc = "Trim trailing whitespace and trailing empty lines"})
+end, { desc = "Trim trailing whitespace and trailing empty lines" })
+
+vim.keymap.set("n", "<leader>cf", function()
+  require("conform").format({ lsp_format = "fallback" })
+  MiniTrailspace.trim()
+  MiniTrailspace.trim_last_lines()
+end, { desc = "Format File" })
 
 -- Diagnostics
 vim.keymap.set("n", "<leader>vt", function()
@@ -138,4 +144,4 @@ vim.keymap.set("n", "<leader>vh", function()
     not vim.lsp.inlay_hint.is_enabled({ bufnr = 0 }),
     { bufnr = 0 }
   )
-end, { desc = "Toggle inlay hints"})
+end, { desc = "Toggle inlay hints" })
