@@ -50,6 +50,9 @@ return {
     --               creates it when it loads the project, so next time the
     --               first marker matches).
     --   .git        Loose .rs files outside any cargo project.
+    -- No marker at all (e.g. ~/tmp/test.rs): don't attach. rust-analyzer
+    -- needs a cargo project and never answers without one; for quick
+    -- experiments use `cargo new <dir>` instead of a lone file.
     local root = vim.fs.root(fname, { "Cargo.lock", "Cargo.toml", ".git" })
     if root then
       on_dir(root)

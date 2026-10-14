@@ -15,9 +15,14 @@ return {
         -- Make nvim's own Lua files (and their type annotations) known, for
         -- hover docs and completion of vim.*. Must be a list: a plain string
         -- is silently ignored.
-        library = { vim.env.VIMRUNTIME },
+        library = {
+          vim.env.VIMRUNTIME,
+          -- Plugins installed by vim.pack (Snacks, MiniFiles, ...)
+          vim.fn.stdpath("data") .. "/site/pack/core/opt",
+        },
         checkThirdParty = false, -- no "configure your workspace?" prompt
       },
+      hint = { enable = true }, -- send inlay hints (off by default in lua_ls)
     },
   },
 }

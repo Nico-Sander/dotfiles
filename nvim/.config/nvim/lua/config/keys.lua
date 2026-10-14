@@ -131,3 +131,11 @@ vim.keymap.set("n", "<leader>vt", function()
   local config = vim.diagnostic.config() or {}
   vim.diagnostic.config({ virtual_text = not config.virtual_text })
 end, { desc = "Toggle diagnostic virtual text" })
+
+-- Inlay Hints
+vim.keymap.set("n", "<leader>vh", function()
+  vim.lsp.inlay_hint.enable(
+    not vim.lsp.inlay_hint.is_enabled({ bufnr = 0 }),
+    { bufnr = 0 }
+  )
+end, { desc = "Toggle inlay hints"})
