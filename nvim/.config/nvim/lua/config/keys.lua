@@ -117,6 +117,12 @@ vim.keymap.set("n", "<leader>/", function() Snacks.picker.lines() end, { desc = 
 vim.keymap.set("n", "<leader>fh", function() Snacks.picker.help() end, { desc = "Help Picker" })
 vim.keymap.set("n", "<leader>fd", function() Snacks.picker.diagnostics({ layout = { preset = "ivy_split" } }) end, { desc = "Diagnostics Picker" })
 vim.keymap.set("n", "<leader>fk", function() Snacks.picker.keymaps() end, { desc = "Keymaps Picker" })
+vim.keymap.set("n", "<leader>fc", function()
+  -- The files in stdpath("config") are stow symlinks, which the picker skips:
+  -- resolve init.lua to search its real directory in the dotfiles repo
+  local config_repo_root = vim.fs.dirname(vim.fn.resolve(vim.fn.stdpath("config") .. "/init.lua"))
+  Snacks.picker.files({ dirs = { config_repo_root }, title = "Config Files" })
+end, { desc = "Find Files of active Nvim configuration" })
 
 -- Formatting
 vim.keymap.set("n", "<leader>ct", function()

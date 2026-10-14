@@ -152,7 +152,7 @@ require("snacks").setup({
     enabled = true,
     indent = {
       char = "|",
-      only_scope = true,
+      only_scope = false,
       only_current = true,
     },
   },
