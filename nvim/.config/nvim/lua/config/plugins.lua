@@ -35,8 +35,17 @@ vim.cmd.colorscheme("tokyonight")
 ----------------------------------------------------------------------------------
 -- Treesitter
 ----------------------------------------------------------------------------------
+-- Parsers to install, by language name (not filetype: sh files use "bash").
+-- All names: SUPPORTED_LANGUAGES.md in the nvim-treesitter repo, or
+-- :lua =require("nvim-treesitter").get_available()
+-- Bundled with nvim, no install needed: c, lua, vim, vimdoc, query, markdown
 require("nvim-treesitter").install {
   "rust",
+  "python",
+  "bash",
+  "toml",
+  "json",
+  "yaml",
 }
 
 ----------------------------------------------------------------------------------
@@ -50,11 +59,6 @@ require("mini.files").setup({
     go_out_plus = "H",
   },
 })
-
-----------------------------------------------------------------------------------
--- Mini Cmdline Completion
-----------------------------------------------------------------------------------
--- require("mini.cmdline").setup()
 
 ----------------------------------------------------------------------------------
 -- Mini Surround
@@ -103,15 +107,16 @@ require("snacks").setup({
     -- Per-source defaults (:h snacks-picker-sources). Both finders run rg:
     --   hidden  = true  adds --hidden     (dotfiles and dot-directories)
     --   ignored = true  adds --no-ignore  (files listed in .gitignore)
-    -- .git itself is always excluded. Toggle both at runtime with the keys below.
+    -- .git itself is always excluded. Both off (snacks' default), toggle them
+    -- at runtime with the keys below.
     sources = {
       files = {
-        hidden = true,
-        ignored = true,
+        hidden = false,
+        ignored = false,
       },
       grep = {
-        hidden = true,
-        ignored = true,
+        hidden = false,
+        ignored = false,
       },
     },
 
@@ -176,19 +181,16 @@ require("snacks").setup({
 ----------------------------------------------------------------------------------
 require("conform").setup({
   formatters_by_ft = {
-    -- for available formatters see :h conform-formatters
-    python = { "ruff_organize_imports", "ruff_format" }, -- multiple formatters are run sequentially
+    -- Available formatters: :h conform-formatters. A list runs in order.
+    python = { "ruff_organize_imports", "ruff_format" },
     rust = { "rustfmt" },
     bash = { "shfmt" },
     sh = { "shfmt" },
   },
 
-  -- If this is set, Conform will run the formatter on save.
-  -- It will pass the table to conform.format().
-  -- This can also be a function that returns the table.
+  -- Format on :w, options as for conform.format() (:h conform.format)
   format_on_save = {
-    -- I recommend these options. See :help conform.format for details.
-    lsp_format = "fallback",
+    lsp_format = "fallback", -- no formatter listed above -> ask the LSP (Lua)
     timeout_ms = 500,
   },
 })

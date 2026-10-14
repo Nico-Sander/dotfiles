@@ -37,8 +37,6 @@ vim.api.nvim_create_autocmd("FileType", {
     local lang = vim.treesitter.language.get_lang(ev.match) -- returns nil on ft=""
     if lang and vim.treesitter.language.add(lang) then
       vim.treesitter.start()
-      -- Uncomment the following line to turn on tree-sitters experimental indentation
-      -- vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
     end
   end,
 })
@@ -148,5 +146,22 @@ vim.api.nvim_create_autocmd("LspAttach", {
     map("grt", "lsp_type_definitions", "LSP Type Definitions Picker")
     map("<leader>fs", "lsp_symbols", "LSP Symbols Picker")
     map("<leader>fS", "lsp_workspace_symbols", "LSP Workspace Symbols Picker")
+  end,
+})
+
+----------------------------------------------------------------------------------
+-- No auto-pairing of ' in Rust: it starts lifetimes (&'a str), not just
+-- char literals
+----------------------------------------------------------------------------------
+vim.api.nvim_create_autocmd("FileType", {
+  group = group,
+  -- FileType patterns match the filetype ("rust"), not the file name
+  pattern = "rust",
+  desc = "Disable mini.pairs for ' in Rust (lifetimes)",
+  callback = function(ev)
+    -- mini.pairs maps ' globally (MiniPairs.map). MiniPairs.unmap_buf only
+    -- removes mappings made with map_buf, so instead shadow the global one
+    -- with a buffer-local mapping that just types '
+    vim.keymap.set("i", "'", "'", { buf = ev.buf, desc = "Plain ' (no pair)" })
   end,
 })

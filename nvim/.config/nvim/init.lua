@@ -1,4 +1,4 @@
--- Neovim config (rebuild from scratch in progress)
+-- Neovim config
 --
 -- Layout:
 --   init.lua              entry point: leader key, then loads lua/config/*

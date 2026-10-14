@@ -73,7 +73,7 @@ vim.o.splitright = true
 -- One global statusline; horizontal splits then get a WinSeparator line
 vim.o.laststatus = 3
 
--- Swap and Undo files (Not yet clear)
+-- Swap and Undo files
 vim.o.swapfile = false
 vim.o.undofile = true -- undo history survives closing the file (~/.local/state/nvim/undo/)
 vim.o.confirm = true -- :q on a changed buffer asks to save instead of failing

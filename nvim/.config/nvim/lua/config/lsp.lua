@@ -9,6 +9,7 @@ vim.lsp.enable({
   "basedpyright",
   "ruff",
   "rust_analyzer",
+  "bashls",
 })
 
 -- How diagnostics (errors, warnings, ... from LSP and other sources) are
