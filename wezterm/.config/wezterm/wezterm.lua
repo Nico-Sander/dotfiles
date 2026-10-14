@@ -136,9 +136,8 @@ end
 -- Rendering
 -- ============================================================================
 
--- Native Wayland is the default (enable_wayland = true). Set it to false to
--- run through XWayland instead, only as a fallback if the window misbehaves.
--- config.enable_wayland = false
+-- Native Wayland is the default. Fallback if the window misbehaves: run
+-- through XWayland with config.enable_wayland = false.
 
 -- GPU backend: "OpenGL" (default) | "WebGpu" (Vulkan on Linux) | "Software"
 config.front_end = "WebGpu"
@@ -186,9 +185,8 @@ config.window_padding = { left = 5, right = 5, top = 5, bottom = 5 }
 config.font = wezterm.font("JetBrains Mono", { weight = "Medium" })
 config.font_size = 12
 
--- JetBrains Mono has ligatures (-> == != render as single glyphs).
--- Uncomment to turn them off:
--- config.harfbuzz_features = { "calt=0", "clig=0", "liga=0" }
+-- JetBrains Mono has ligatures (-> == != render as single glyphs). To turn
+-- them off: config.harfbuzz_features = { "calt=0", "clig=0", "liga=0" }
 
 -- ============================================================================
 -- Colors & cursor
@@ -206,8 +204,8 @@ config.colors = {
 	background = "#15161a",
 }
 
--- 1.0 = opaque. Values < 1.0 make the window see-through (GNOME has no blur).
--- config.window_background_opacity = 0.95
+-- Window opacity: config.window_background_opacity, 1.0 = opaque (default).
+-- Values < 1.0 make the window see-through (GNOME has no blur).
 
 -- Cursor shape before a program changes it. zsh/nvim/tmux can set their own
 -- shape via escape codes, which overrides this.
