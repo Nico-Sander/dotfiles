@@ -141,6 +141,32 @@ rm -rf "${XDG_DATA_HOME:-$HOME/.local/share}/uv"
 echo -e "    ${GREEN}[+] uv, uvx and all uv tools (basedpyright, ruff, ...) removed.${NC}"
 
 # ===========================================================================
+# Rust toolchain
+# ===========================================================================
+# rustup removes ~/.rustup and ~/.cargo (including anything installed with
+# cargo install), plus the PATH lines a manual install added to ~/.profile,
+# ~/.bashrc and ~/.zshenv
+echo -e "${BLUE}[*] Removing Rust (rustup)...${NC}"
+if [ -x "$HOME/.cargo/bin/rustup" ]; then
+    "$HOME/.cargo/bin/rustup" self uninstall -y
+fi
+echo -e "    ${GREEN}[+] rustup, the Rust toolchain and ~/.cargo removed.${NC}"
+
+# ===========================================================================
+# npm packages
+# ===========================================================================
+# Before the apt section, which purges npm. Uninstalling also removes the
+# links from ~/.local/bin
+echo -e "${BLUE}[*] Removing npm packages...${NC}"
+NPM_PREFIX="$HOME/.local"
+NPM_PACKAGES=(bash-language-server)
+if command -v npm &> /dev/null; then
+    npm uninstall --global --prefix "$NPM_PREFIX" --silent "${NPM_PACKAGES[@]}"
+fi
+rmdir --ignore-fail-on-non-empty "$NPM_PREFIX/lib/node_modules" "$NPM_PREFIX/lib" 2> /dev/null || true
+echo -e "    ${GREEN}[+] npm packages (${NPM_PACKAGES[*]}) removed.${NC}"
+
+# ===========================================================================
 # Zsh plugins
 # ===========================================================================
 echo -e "${BLUE}[*] Removing zsh plugins...${NC}"
@@ -196,6 +222,7 @@ RUNTIME_PATHS=(
     "$HOME/.cache/nvim"
     "$HOME/.local/share/zoxide"
     "$HOME/.cache/uv"
+    "$HOME/.npm"
 )
 EXISTING_RUNTIME_PATHS=()
 for p in "${RUNTIME_PATHS[@]}"; do
@@ -224,7 +251,8 @@ fi
 PACKAGES=(
     stow curl build-essential tree-sitter-cli  # tree-sitter-cli: older installs
     zsh tmux fzf ripgrep lsd bat zoxide wl-clipboard
-    wezterm-nightly shfmt
+    wezterm-nightly shfmt shellcheck
+    npm  # nodejs came with it, autoremove takes it
 )
 
 _is_installed() {

@@ -2,8 +2,9 @@
 
 # Usage: ./populate.sh [--update]
 #   --update   replace the installed Neovim, tree-sitter CLI,
-#              lua-language-server and uv with their latest releases and
-#              upgrade the uv tools
+#              lua-language-server and uv with their latest releases,
+#              upgrade the uv tools and npm packages and update the Rust
+#              toolchain
 
 # Exit immediately if a command exits with a non-zero status
 set -e
@@ -34,6 +35,8 @@ echo -e "${BLUE}==========================================${NC}"
 # ===========================================================================
 # build-essential: nvim-treesitter compiles its parsers with the C compiler
 # wl-clipboard: clipboard for tmux and Neovim ("unnamedplus") on Wayland
+# shfmt, shellcheck: shell formatter / linter (conform, bash-language-server)
+# npm: installs bash-language-server, pulls in nodejs as a dependency
 echo -e "${BLUE}[>] Installing apt packages...${NC}"
 sudo apt update -q
 sudo apt install -y \
@@ -48,7 +51,9 @@ sudo apt install -y \
   bat \
   zoxide \
   wl-clipboard \
-  shfmt
+  shfmt \
+  shellcheck \
+  npm
 echo -e "    ${GREEN}[+] apt packages installed.${NC}"
 
 # ===========================================================================
@@ -298,6 +303,54 @@ if $UPDATE; then
   "$UV_BIN" tool upgrade --all
 fi
 echo -e "    ${GREEN}[+] uv tools ready (update with --update).${NC}"
+
+# ===========================================================================
+# Rust toolchain (rustup, in userspace)
+# ===========================================================================
+# rustup installs the stable toolchain into ~/.rustup and its commands (cargo,
+# rustc, rustfmt, rust-analyzer, ...) into ~/.cargo/bin, which .zshrc adds to
+# PATH. rust-src: standard library sources, rust-analyzer needs them.
+# update with: ./populate.sh --update (rustup itself and the toolchain)
+RUSTUP_BIN="$HOME/.cargo/bin/rustup"
+RUST_COMPONENTS=(rust-analyzer rust-src)
+
+echo -e "${BLUE}[*] Checking for Rust (rustup)...${NC}"
+if [ ! -x "$RUSTUP_BIN" ]; then
+  echo -e "    [>] rustup not found. Installing the stable toolchain..."
+  # -y: no prompts, --no-modify-path: .zshrc already adds ~/.cargo/bin
+  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs |
+    sh -s -- -y --no-modify-path
+elif $UPDATE; then
+  echo -e "    [>] Updating rustup and the Rust toolchain..."
+  "$RUSTUP_BIN" update
+fi
+# component add is a no-op for installed components, so this also picks up
+# components added to RUST_COMPONENTS later
+"$RUSTUP_BIN" --quiet component add "${RUST_COMPONENTS[@]}"
+echo -e "    ${GREEN}[+] $("$HOME/.cargo/bin/rustc" --version) ready (update with --update).${NC}"
+
+# ===========================================================================
+# npm packages (in userspace)
+# ===========================================================================
+# --prefix ~/.local: installs into ~/.local/lib/node_modules and links the
+# commands into ~/.local/bin, so no sudo and nothing in /usr. Used for
+# bash-language-server (runs shellcheck for its diagnostics).
+# update with: ./populate.sh --update
+NPM_PREFIX="$HOME/.local"
+NPM_PACKAGES=(bash-language-server)
+
+echo -e "${BLUE}[*] Checking for npm packages (${NPM_PACKAGES[*]})...${NC}"
+for pkg in "${NPM_PACKAGES[@]}"; do
+  if [ ! -x "$NPM_PREFIX/bin/$pkg" ]; then
+    echo -e "    [>] Installing $pkg..."
+    npm install --global --prefix "$NPM_PREFIX" --silent "$pkg"
+  fi
+done
+if $UPDATE; then
+  echo -e "    [>] Updating npm packages..."
+  npm update --global --prefix "$NPM_PREFIX" --silent
+fi
+echo -e "    ${GREEN}[+] npm packages ready (update with --update).${NC}"
 
 # ===========================================================================
 # WezTerm (nightly)
