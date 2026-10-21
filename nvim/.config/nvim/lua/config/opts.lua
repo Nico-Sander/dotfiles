@@ -14,7 +14,7 @@ end)
 -- Tabs, Spaces and Indentation
 vim.o.tabstop = 2
 vim.o.shiftwidth = 2
-vim.o.softtabstop = -1  -- use shiftwidth's value
+vim.o.softtabstop = -1 -- use shiftwidth's value
 vim.o.expandtab = true
 vim.o.shiftround = true
 
@@ -53,9 +53,11 @@ vim.o.inccommand = "split" -- :s shows a live preview of all matches in a split
 vim.o.scrolloff = 8
 
 -- Long lines: wrap at the window width instead of scrolling sideways. Only the display changes, the file keeps its long lines (no 'textwidth').
-vim.o.wrap = true -- (default) wrap lines longer than the window
-vim.o.linebreak = true -- break at word boundaries ('breakat'), not mid-word
+vim.o.wrap = true        -- (default) wrap lines longer than the window
+vim.o.wrapmargin = 10    -- this counts from the right of the window
+vim.o.linebreak = true   -- break at word boundaries ('breakat'), not mid-word
 vim.o.breakindent = true -- wrapped part keeps the line's indent
+vim.o.textwidth = 0;     -- do not create new lines
 -- list:-1 indents the wrapped part of a list item to its text, using the
 -- filetype's 'formatlistpat' (markdown: -, *, +, 1.)
 vim.o.breakindentopt = "list:-1"
@@ -76,7 +78,7 @@ vim.o.laststatus = 3
 -- Swap and Undo files
 vim.o.swapfile = false
 vim.o.undofile = true -- undo history survives closing the file (~/.local/state/nvim/undo/)
-vim.o.confirm = true -- :q on a changed buffer asks to save instead of failing
+vim.o.confirm = true  -- :q on a changed buffer asks to save instead of failing
 
 -- CursorHold fires after 250ms without typing (default 4000). Plugins and
 -- LSP use it for hover highlights and git signs.
