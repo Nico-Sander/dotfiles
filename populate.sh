@@ -381,8 +381,6 @@ GNOME_EXTENSIONS=(
   just-perfection-desktop@just-perfection
   multi-monitors-bar@frederykabryan
   perfect-fit@ryliov.work.com
-  focus-changer@heartmire
-  focus@scaryrawr.github.io
 )
 echo -e "${BLUE}[*] Checking for GNOME Shell extensions...${NC}"
 if ! command -v gnome-extensions &>/dev/null; then

@@ -94,11 +94,6 @@ transparency-mode='DEFAULT'
 check-x11wayland=true
 show-home=false
 
-[focus]
-inactive-opacity=uint32 85
-is-background-blur=false
-is-desaturate-enabled=false
-
 [just-perfection]
 accessibility-menu=false
 activities-button=true

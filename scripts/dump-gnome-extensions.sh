@@ -13,7 +13,7 @@ OUT="$DOTFILES_DIR/gnome/extensions.dconf"
 # else is left out, e.g. leftovers from removed extensions (p7-borders,
 # tiling-assistant). dash-to-dock and ding belong to Ubuntu's built-in
 # dock and desktop icons extensions.
-KEEP_DIRS=(blur-my-shell dash-to-dock ding focus just-perfection multi-monitors-bar perfect-fit)
+KEEP_DIRS=(blur-my-shell dash-to-dock ding just-perfection multi-monitors-bar perfect-fit)
 
 # Keep only the [sections] whose top-level directory is in KEEP_DIRS
 _keep_sections() {
