@@ -19,6 +19,15 @@ return {
   cmd = { "rust-analyzer" },
   filetypes = { "rust" },
 
+  settings = {
+    ["rust-analyzer"] = {
+      -- Run clippy instead of `cargo check` on save, so its lints show up as
+      -- diagnostics too (clippy includes all of cargo check's errors).
+      -- Needs the clippy component: rustup component add clippy
+      check = { command = "clippy" },
+    },
+  },
+
   -- root_dir (a function) replaces root_markers when the root needs logic.
   -- nvim starts one client per root directory, so the root decides which
   -- files share a rust-analyzer. Call on_dir(root) to start/attach, or

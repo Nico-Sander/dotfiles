@@ -165,3 +165,18 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.keymap.set("i", "'", "'", { buf = ev.buf, desc = "Plain ' (no pair)" })
   end,
 })
+
+----------------------------------------------------------------------------------
+-- No hard wrapping in Rust: the built-in ftplugin/rust.vim sets textwidth=100
+-- (Rust style guide), and formatoptions "c" then breaks comments at column
+-- 100 while typing. rustfmt still enforces the line length for code on save.
+-- (vim.g.rust_recommended_style = 0 would also drop the 4-space indent.)
+----------------------------------------------------------------------------------
+vim.api.nvim_create_autocmd("FileType", {
+  group = group,
+  pattern = "rust",
+  desc = "Rust: no textwidth from the ftplugin",
+  callback = function()
+    vim.opt_local.textwidth = 0
+  end,
+})
