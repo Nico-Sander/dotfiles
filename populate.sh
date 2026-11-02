@@ -33,6 +33,7 @@ echo -e "${BLUE}==========================================${NC}"
 # ===========================================================================
 # apt packages
 # ===========================================================================
+# git: clones the zsh plugins (not preinstalled on Ubuntu Desktop)
 # build-essential: nvim-treesitter compiles its parsers with the C compiler
 # wl-clipboard: clipboard for tmux and Neovim ("unnamedplus") on Wayland
 # shfmt, shellcheck: shell formatter / linter (conform, bash-language-server)
@@ -41,6 +42,7 @@ echo -e "${BLUE}[>] Installing apt packages...${NC}"
 sudo apt update -q
 sudo apt install -y \
   stow \
+  git \
   curl \
   build-essential \
   zsh \
