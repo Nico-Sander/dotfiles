@@ -180,3 +180,15 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.opt_local.textwidth = 0
   end,
 })
+
+----------------------------------------------------------------------------------
+-- Markdown: let obsidian.nvim conceal link syntax and checkboxes
+----------------------------------------------------------------------------------
+vim.api.nvim_create_autocmd("FileType", {
+  group = group,
+  pattern = "markdown",
+  desc = "conceal markup in markdown",
+  callback = function()
+    vim.opt_local.conceallevel = 2
+  end,
+})

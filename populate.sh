@@ -3,8 +3,8 @@
 # Usage: ./populate.sh [--update]
 #   --update   replace the installed Neovim, tree-sitter CLI,
 #              lua-language-server and uv with their latest releases,
-#              upgrade the uv tools and npm packages and update the Rust
-#              toolchain
+#              upgrade the uv tools, npm packages and VS Code and update
+#              the Rust toolchain
 
 # Exit immediately if a command exits with a non-zero status
 set -e
@@ -369,6 +369,50 @@ if ! command -v wezterm &>/dev/null; then
   echo -e "    ${GREEN}[+] WezTerm nightly installed.${NC}"
 else
   echo -e "    ${GREEN}[+] WezTerm is already installed.${NC}"
+fi
+
+# ===========================================================================
+# VS Code (Microsoft's apt repository)
+# ===========================================================================
+# The official .deb from packages.microsoft.com, not the snap. Normal system
+# updates (apt upgrade) keep it current; --update upgrades it right away.
+# Settings come from the code stow package (~/.config/Code/User).
+VSCODE_KEYRING=/usr/share/keyrings/microsoft.gpg
+VSCODE_SOURCES=/etc/apt/sources.list.d/vscode.sources
+
+echo -e "${BLUE}[*] Checking for VS Code...${NC}"
+# The snap and the .deb would both provide `code`; keep only the .deb
+if command -v snap &>/dev/null && snap list code &>/dev/null; then
+  echo -e "    [>] Removing the VS Code snap in favor of the .deb..."
+  sudo snap remove code
+fi
+if [ ! -f "$VSCODE_SOURCES" ]; then
+  echo -e "    [>] Adding the Microsoft VS Code apt repository..."
+  curl -fsSL https://packages.microsoft.com/keys/microsoft.asc |
+    sudo gpg --yes --dearmor -o "$VSCODE_KEYRING"
+  sudo tee "$VSCODE_SOURCES" >/dev/null <<EOF
+Types: deb
+URIs: https://packages.microsoft.com/repos/code
+Suites: stable
+Components: main
+Architectures: amd64,arm64,armhf
+Signed-By: $VSCODE_KEYRING
+EOF
+  # The package asks whether to add its repo; it's already there, so answer
+  # up front instead of getting a prompt
+  echo "code code/add-microsoft-repo boolean true" | sudo debconf-set-selections
+  sudo apt update -q
+fi
+if ! dpkg-query -W -f='${Status}' code 2>/dev/null | grep -q 'ok installed'; then
+  echo -e "    [>] VS Code not found. Installing..."
+  sudo apt install -y code
+  echo -e "    ${GREEN}[+] VS Code $(code --version | head -n1) installed.${NC}"
+elif $UPDATE; then
+  echo -e "    [>] Upgrading VS Code..."
+  sudo apt install -y --only-upgrade code
+  echo -e "    ${GREEN}[+] VS Code $(code --version | head -n1) is up to date.${NC}"
+else
+  echo -e "    ${GREEN}[+] VS Code $(code --version | head -n1) is already installed (updates via apt).${NC}"
 fi
 
 # ===========================================================================

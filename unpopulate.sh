@@ -92,6 +92,19 @@ sudo rm -f /etc/apt/sources.list.d/wezterm.list /usr/share/keyrings/wezterm-fury
 echo -e "    ${GREEN}[+] Repository and signing key removed (package is purged below).${NC}"
 
 # ===========================================================================
+# VS Code apt repository
+# ===========================================================================
+echo -e "${BLUE}[*] Removing VS Code apt repository...${NC}"
+sudo rm -f /etc/apt/sources.list.d/vscode.sources /etc/apt/sources.list.d/vscode.list
+# Other Microsoft repos (Edge, .NET, ...) may share the key; keep it then
+if grep -rqs /usr/share/keyrings/microsoft.gpg /etc/apt/sources.list.d/; then
+    echo -e "    ${YELLOW}[!] Keeping /usr/share/keyrings/microsoft.gpg, another repository uses it.${NC}"
+else
+    sudo rm -f /usr/share/keyrings/microsoft.gpg
+fi
+echo -e "    ${GREEN}[+] Repository removed (package is purged below).${NC}"
+
+# ===========================================================================
 # Neovim
 # ===========================================================================
 echo -e "${BLUE}[*] Removing Neovim...${NC}"
@@ -249,7 +262,7 @@ fi
 PACKAGES=(
     stow curl build-essential tree-sitter-cli  # tree-sitter-cli: older installs
     zsh tmux fzf ripgrep lsd bat zoxide wl-clipboard
-    wezterm-nightly shfmt shellcheck
+    wezterm-nightly code shfmt shellcheck
     npm  # nodejs came with it, autoremove takes it
 )
 

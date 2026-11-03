@@ -1,10 +1,11 @@
 vim.pack.add({
-  "https://github.com/folke/tokyonight.nvim",                                          -- TokyoNight Colorscheme
-  "https://github.com/nvim-treesitter/nvim-treesitter",                                -- Parser installer (highlighting itself is built in)
-  "https://github.com/nvim-mini/mini.nvim",                                            -- Collection of modules (files, surround, pairs, diff, ...)
-  "https://github.com/folke/snacks.nvim",                                              -- Picker, indent guides, vim.ui.input, smooth scrolling
-  "https://github.com/stevearc/conform.nvim",                                          -- Formatting
-  { src = "https://github.com/saghen/blink.cmp", version = vim.version.range("1.*") }, -- Completions
+  "https://github.com/folke/tokyonight.nvim",                                                     -- TokyoNight Colorscheme
+  "https://github.com/nvim-treesitter/nvim-treesitter",                                           -- Parser installer (highlighting itself is built in)
+  "https://github.com/nvim-mini/mini.nvim",                                                       -- Collection of modules (files, surround, pairs, diff, ...)
+  "https://github.com/folke/snacks.nvim",                                                         -- Picker, indent guides, vim.ui.input, smooth scrolling
+  "https://github.com/stevearc/conform.nvim",                                                     -- Formatting
+  { src = "https://github.com/saghen/blink.cmp",            version = vim.version.range("1.*") }, -- Completions
+  { src = "https://github.com/obsidian-nvim/obsidian.nvim", version = vim.version.range("3.*") }, -- Obsidian vault support
 })
 
 ----------------------------------------------------------------------------------
@@ -251,4 +252,39 @@ require("blink.cmp").setup({
       ghost_text = { enabled = true },
     },
   },
+})
+
+----------------------------------------------------------------------------------
+-- Obsidian (FLEX-E vault)
+----------------------------------------------------------------------------------
+-- Only active for buffers inside a workspace path. Docs: :Obsidian help
+require("obsidian").setup({
+  legacy_commands = false, -- only ":Obsidian <sub>", no ":ObsidianToday" etc.
+  workspaces = {
+    { name = "flex-e", path = "~/workspace/vaults/flex-e" },
+  },
+
+  -- :Obsidian new puts notes in inbox/ (vault rule: unsure where it goes -> inbox)
+  notes_subdir = "inbox",
+  new_notes_location = "notes_subdir",
+  -- File name from the title: "Load Duration Curve" -> load-duration-curve.md
+  note_id_func = require("obsidian.builtin").title_id,
+
+  -- The vault has its own frontmatter schema; never rewrite it on save
+  frontmatter = { enabled = false },
+
+  templates = {
+    folder = "00-meta/templates", -- {{date}} and {{title}} are filled in
+    date_format = "YYYY-MM-DD",
+  },
+  daily_notes = {
+    folder = "07-journal",
+    date_format = "YYYY-MM-DD",
+    template = "daily.md",
+    default_tags = {},
+  },
+  attachments = { folder = "attachments" },
+
+  picker = { name = "snacks.picker" },
+  completion = { min_chars = 1 }, -- suggest notes after [[ plus one letter
 })
