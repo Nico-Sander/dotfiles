@@ -15,7 +15,7 @@ KANATA_CONFIG_REL_PATH=".config/kanata/kanata.kbd"
 SYSTEM_KANATA_CONFIG_DST="/etc/kanata/kanata-config.kbd"
 
 # Kanata version to download
-KANATA_VERSION="v1.9.0"
+KANATA_VERSION="v1.12.0"
 
 # Dedicated user/group names
 KANATA_USER="kanata"
@@ -113,19 +113,47 @@ echo "KERNEL==\"uinput\", MODE=\"0660\", GROUP=\"$UINPUT_GROUP\", OPTIONS+=\"sta
 #========================
 # STEP 5: Download and Install Kanata
 #========================
-KANATA_URL="https://github.com/jtroo/kanata/releases/download/${KANATA_VERSION}/kanata"
+# Since v1.10 releases ship a zip with several binaries; kanata_linux_x64 is the
+# standard build (the *_cmd_allowed variant can run shell commands, not needed here).
+KANATA_RELEASE_URL="https://github.com/jtroo/kanata/releases/download/${KANATA_VERSION}"
+KANATA_ZIP="linux-binaries-x64.zip"
+KANATA_ZIP_BIN="kanata_linux_x64"
 KANATA_BIN_PATH="/usr/local/bin/kanata"
 
-echoinfo "Stopping kanata.service (if running) before download..."
-systemctl stop kanata.service > /dev/null 2>&1 || true # Stop the service, ignore errors
+KANATA_TMP="$(mktemp -d)"
+trap 'rm -rf "$KANATA_TMP"' EXIT
 
-echoinfo "Downloading Kanata ${KANATA_VERSION} from ${KANATA_URL}..."
-# Use curl with -fSL to follow redirects, show errors, and fail silently on HTTP errors
-curl -fSL -o "$KANATA_BIN_PATH" "$KANATA_URL"
-if [ $? -ne 0 ]; then
+# Download and verify before touching the running service, so a failed
+# download never leaves you without kanata.
+echoinfo "Downloading Kanata ${KANATA_VERSION}..."
+if ! curl -fSL -o "$KANATA_TMP/$KANATA_ZIP" "$KANATA_RELEASE_URL/$KANATA_ZIP" ||
+   ! curl -fSL -o "$KANATA_TMP/sha256sums" "$KANATA_RELEASE_URL/sha256sums"; then
     echoerror "Failed to download Kanata. Check URL or network connection."
     exit 1
 fi
+
+echoinfo "Verifying checksum..."
+if ! (cd "$KANATA_TMP" && grep " ${KANATA_ZIP}\$" sha256sums | sha256sum -c --status); then
+    echoerror "Checksum mismatch for $KANATA_ZIP. Aborting."
+    exit 1
+fi
+
+if ! unzip -q -o "$KANATA_TMP/$KANATA_ZIP" "$KANATA_ZIP_BIN" -d "$KANATA_TMP"; then
+    echoerror "Failed to extract $KANATA_ZIP_BIN (is unzip installed?)."
+    exit 1
+fi
+
+echoinfo "Checking config with the new binary..."
+if ! "$KANATA_TMP/$KANATA_ZIP_BIN" --check --cfg "$SYSTEM_KANATA_CONFIG_DST" >/dev/null 2>&1; then
+    echoerror "Config is not valid for Kanata ${KANATA_VERSION}. Run this to see why:"
+    echoerror "  $KANATA_TMP/$KANATA_ZIP_BIN --check --cfg $SYSTEM_KANATA_CONFIG_DST"
+    trap - EXIT
+    exit 1
+fi
+
+echoinfo "Stopping kanata.service (if running) and installing binary..."
+systemctl stop kanata.service > /dev/null 2>&1 || true # Stop the service, ignore errors
+install -m 754 "$KANATA_TMP/$KANATA_ZIP_BIN" "$KANATA_BIN_PATH"
 
 echoinfo "Setting permissions on ${KANATA_BIN_PATH}..."
 chown root:"$KANATA_USER" "$KANATA_BIN_PATH"

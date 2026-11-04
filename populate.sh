@@ -44,6 +44,7 @@ sudo apt install -y \
   stow \
   git \
   curl \
+  unzip \
   build-essential \
   zsh \
   tmux \
@@ -538,9 +539,12 @@ if ! command -v kanata &>/dev/null; then
 else
   echo -e "    ${GREEN}[+] Kanata is already installed.${NC}"
   echo -e "    [>] Syncing kanata.kbd config to system directory..."
-  sudo cp "$HOME/.config/kanata/kanata.kbd" /etc/kanata/kanata-config.kbd
-  sudo systemctl restart kanata.service
-  echo -e "    ${GREEN}[+] Kanata service restarted with the latest config.${NC}"
+  if bash "$DOTFILES_DIR/kanata/.config/kanata/sync-kanata.sh"; then
+    echo -e "    ${GREEN}[+] Kanata service restarted with the latest config.${NC}"
+  else
+    echo -e "    ${YELLOW}[!] Sync failed. If the installed kanata is too old for the config, run:${NC}"
+    echo -e "        sudo bash $DOTFILES_DIR/scripts/install-kanata.sh"
+  fi
 fi
 
 echo -e "${GREEN}==========================================${NC}"
