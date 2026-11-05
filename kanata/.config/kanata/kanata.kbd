@@ -46,7 +46,7 @@
                     q   w   e   r   t   y   u   i   o   p   [   ]
     caps            a   s   d   f   g   h   j   k   l   ;   '
                     z   x   c   v   b   n   m
-    lctl
+    lctl            spc
 )
 
 ;; Homerow mod timing. Hold-time = how long a key must be held on its own
@@ -125,12 +125,17 @@
     )
 )
 
+;; Space-hold for another layer
+(defalias
+    spc (tap-hold-release $repress 200 spc (layer-while-held nav))
+)
+
 ;; Default layer: Colemak with homerow mods. Caps is Esc.
 (deflayer base
                     q   w   f   p   g   j   l   u   y   ;   [   ]
     esc             @a  @r  @s  @t  d   h   @n  @e  @i  @o  '
                     z   x   c   v   b   k   m
-    @lctl-uml
+    @lctl-uml       @spc
 )
 
 ;; Active while ctl is held: German special characters. Everything else falls
@@ -139,5 +144,19 @@
                     _   _   _   _   _   _   _   _   _   _   @ue @ss
     _               _   _   _   _   _   _   _   _   _   @oe @ae
                     _   _   _   _   _   _   _
-    _
+    _               _
+)
+
+;; Active while space is held (hold space FIRST, then the other keys).
+;; - Top row: numbers, then - and =. With shift (s): ! @ # $ % ^ & * ( ) _ +
+;; - a r s t: plain mods (no tap/hold), for shift/ctl + arrows and shift + numbers
+;; - d: \ (shift: |)
+;; - h and ': home / end, on both sides of the arrows
+;; - n e i o: arrows (vim order)
+;; - Bottom row: ` (shift: ~)  ( )  { }  then pgup pgdn
+(deflayer nav
+                    1     2     3     4     5     6     7     8     9     0     -     =
+    _               lmet  lalt  lsft  lctl  \     home  left  down  up    rght  end
+                    grv   S-9   S-0   S-[   S-]   pgup  pgdn
+    _               _
 )

@@ -13,6 +13,10 @@ The thumbs only press space right now.
   and just give space its own tap-hold.
 - **Number layer** (e.g. hold right alt or a second thumb key): numbers on the homerow,
   so you don't have to reach for the top row.
+> User Notes: I do not want to use the ralt key at all. Here is how I would suggest the layout for space-hold:
+    - `n e i o` -> arrows
+    - `q w f p g j l u y ;` -> numbers
+    - other keys -> other symbols, those who are needed most often on `a r s t d h`, others on `z x c v b k m , . /`
 
 ### 2. Caps Lock: tap = Esc, hold = Ctrl (or a layer)
 Currently Caps is just Esc. A hold action would give a non-homerow Ctrl for left-hand
