@@ -258,11 +258,18 @@ require("blink.cmp").setup({
 -- Obsidian (FLEX-E vault)
 ----------------------------------------------------------------------------------
 -- Only active for buffers inside a workspace path. Docs: :Obsidian help
-require("obsidian").setup({
+-- setup() throws if no workspace exists, which would abort the rest of the
+-- config (init.lua stops at the failing require, so config.lsp never runs).
+-- So keep only vaults present on this machine, and skip setup if there are none.
+local obsidian_workspaces = vim.tbl_filter(function(ws)
+  return vim.fn.isdirectory(vim.fn.expand(ws.path)) == 1
+end, {
+  { name = "flex-e", path = "~/workspace/vaults/flex-e" },
+})
+
+if #obsidian_workspaces > 0 then require("obsidian").setup({
   legacy_commands = false, -- only ":Obsidian <sub>", no ":ObsidianToday" etc.
-  workspaces = {
-    { name = "flex-e", path = "~/workspace/vaults/flex-e" },
-  },
+  workspaces = obsidian_workspaces,
 
   -- :Obsidian new puts notes in inbox/ (vault rule: unsure where it goes -> inbox)
   notes_subdir = "inbox",
@@ -287,4 +294,4 @@ require("obsidian").setup({
 
   picker = { name = "snacks.picker" },
   completion = { min_chars = 1 }, -- suggest notes after [[ plus one letter
-})
+}) end
