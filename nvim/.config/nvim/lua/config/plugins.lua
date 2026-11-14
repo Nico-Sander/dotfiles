@@ -50,16 +50,16 @@ require("nvim-treesitter").install {
 }
 
 ----------------------------------------------------------------------------------
--- Mini Files
+-- Mini Files (disabled for now, replaced by the snacks explorer sidebar below)
 ----------------------------------------------------------------------------------
-require("mini.files").setup({
-  mappings = { -- Mappings only apply when plugin runs, so they stay defined here
-    go_in = "L",
-    go_in_plus = "<CR>",
-    go_out = "-",
-    go_out_plus = "H",
-  },
-})
+-- require("mini.files").setup({
+--   mappings = { -- Mappings only apply when plugin runs, so they stay defined here
+--     go_in = "L",
+--     go_in_plus = "<CR>",
+--     go_out = "-",
+--     go_out_plus = "H",
+--   },
+-- })
 
 ----------------------------------------------------------------------------------
 -- Mini Surround
@@ -131,9 +131,9 @@ miniclue.setup({
 ----------------------------------------------------------------------------------
 -- Snacks
 ----------------------------------------------------------------------------------
--- Only modules with enabled = true are active; the rest of snacks (explorer,
--- dashboard, ...) stays off. Snacks.rename (used by the mini.files autocmd in
--- autocmds.lua) has no config and is always available.
+-- Only modules with enabled = true are active; the rest of snacks (dashboard,
+-- ...) stays off. Snacks.rename has no config and is always available; the
+-- explorer already uses it, so renames there update LSP imports.
 require("snacks").setup({
   -- Picker docs: :h snacks-picker, keys inside a picker: press ? while it's open.
   picker = {
@@ -152,6 +152,25 @@ require("snacks").setup({
       grep = {
         hidden = false,
         ignored = false,
+      },
+      -- File explorer sidebar (:h snacks-explorer). It's a picker, so it
+      -- shares the toggle keys below. Toggled with "-" (keys.lua).
+      -- Defaults kept: j/k move, <CR>/l open file or expand dir, a add
+      -- (end with / for a dir), d delete (to trash), r rename, m move,
+      -- c copy, y/p yank/paste, H/I hidden/ignored, ? all keys.
+      explorer = {
+        win = {
+          list = {
+            keys = {
+              -- Collapse the folder under the cursor, or the one containing
+              -- the file. nowait: fire immediately instead of waiting
+              -- timeoutlen for a possible <leader> mapping (Space is leader,
+              -- so leader maps don't work while the explorer is focused).
+              ["<space>"] = { "explorer_close", nowait = true },
+              ["<leader>/"] = false, -- default grep-in-dir key, would clash with <space>
+            },
+          },
+        },
       },
     },
 
@@ -187,6 +206,10 @@ require("snacks").setup({
       },
     },
   },
+
+  -- General explorer settings (the picker part is under picker.sources):
+  -- replaces netrw, so `nvim .` / `:e dir` open the sidebar.
+  explorer = { enabled = true },
 
   indent = {
     enabled = true,

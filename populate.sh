@@ -38,6 +38,7 @@ echo -e "${BLUE}==========================================${NC}"
 # wl-clipboard: clipboard for tmux and Neovim ("unnamedplus") on Wayland
 # shfmt, shellcheck: shell formatter / linter (conform, bash-language-server)
 # npm: installs bash-language-server, pulls in nodejs as a dependency
+# fd-find: search in the snacks explorer (needs fd, binary is called fdfind)
 echo -e "${BLUE}[>] Installing apt packages...${NC}"
 sudo apt update -q
 sudo apt install -y \
@@ -50,6 +51,7 @@ sudo apt install -y \
   tmux \
   fzf \
   ripgrep \
+  fd-find \
   lsd \
   bat \
   zoxide \

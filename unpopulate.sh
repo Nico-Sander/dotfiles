@@ -261,7 +261,7 @@ fi
 # pre-existing and something else on the system depends on them.
 PACKAGES=(
     stow curl build-essential tree-sitter-cli  # tree-sitter-cli: older installs
-    zsh tmux fzf ripgrep lsd bat zoxide wl-clipboard
+    zsh tmux fzf ripgrep fd-find lsd bat zoxide wl-clipboard
     wezterm-nightly code shfmt shellcheck
     npm  # nodejs came with it, autoremove takes it
 )

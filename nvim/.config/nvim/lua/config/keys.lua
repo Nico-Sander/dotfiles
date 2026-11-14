@@ -102,12 +102,24 @@ vim.keymap.set("n", "<C-u>", "<C-u>zz", { desc = "move up in buffer with cursor 
 vim.keymap.set("n", "n", "nzzzv", { desc = "Next search results with cursor centered" })
 vim.keymap.set("n", "N", "Nzzzv", { desc = "Previous search results with cursor centered" })
 
--- Mini Files
-vim.keymap.set("n", "<leader>-", function() MiniFiles.open() end, { desc = "Open mini file explorer in working directory" })
+-- Mini Files (disabled for now, see plugins.lua)
+-- vim.keymap.set("n", "<leader>-", function() MiniFiles.open() end, { desc = "Open mini file explorer in working directory" })
+-- vim.keymap.set("n", "-", function()
+--   MiniFiles.open(vim.api.nvim_buf_get_name(0), false)
+--   MiniFiles.reveal_cwd()
+-- end, { desc = "Open mini file explorer in dir of current file" })
+
+-- Snacks Explorer: calling Snacks.explorer() twice opens a second one, so
+-- toggle by hand: close the open explorer picker if there is one.
+-- follow_file (on by default) reveals the current file when it opens.
 vim.keymap.set("n", "-", function()
-  MiniFiles.open(vim.api.nvim_buf_get_name(0), false)
-  MiniFiles.reveal_cwd()
-end, { desc = "Open mini file explorer in dir of current file" })
+  local explorer = Snacks.picker.get({ source = "explorer" })[1]
+  if explorer then
+    explorer:close()
+  else
+    Snacks.explorer()
+  end
+end, { desc = "Toggle file explorer sidebar" })
 
 -- Snacks Pickers
 vim.keymap.set("n", "<leader>ff", function() Snacks.picker.files() end, { desc = "Find Files" })

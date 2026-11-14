@@ -36,7 +36,7 @@ Packages are stowed with `--no-folding`, so only files are symlinked and directo
 
 ## The populate script
 
-- Installs the apt packages (zsh, tmux, fzf, ripgrep, lsd, bat, zoxide, wl-clipboard, ...)
+- Installs the apt packages (zsh, tmux, fzf, ripgrep, fd, lsd, bat, zoxide, wl-clipboard, ...)
 - Links all packages into `$HOME`
 - Clones the zsh plugins into `~/.local/share/zsh/plugins` (update them with `zsh-plugins-update`)
 - Installs the latest stable Neovim to `~/.local/opt/nvim`, linked to `~/.local/bin/nvim`

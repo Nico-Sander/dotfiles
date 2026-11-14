@@ -63,15 +63,16 @@ vim.api.nvim_create_autocmd("PackChanged", {
 
 ----------------------------------------------------------------------------------
 -- LSP-integrated file renaming from within mini.files (:h snacks-rename)
+-- Disabled together with mini.files; the snacks explorer does this itself.
 ----------------------------------------------------------------------------------
-vim.api.nvim_create_autocmd("User", {
-  group = group,
-  pattern = "MiniFilesActionRename",
-  desc = "Lets LSP know that a file has been renamed from mini.files",
-  callback = function(event)
-    Snacks.rename.on_rename_file(event.data.from, event.data.to)
-  end,
-})
+-- vim.api.nvim_create_autocmd("User", {
+--   group = group,
+--   pattern = "MiniFilesActionRename",
+--   desc = "Lets LSP know that a file has been renamed from mini.files",
+--   callback = function(event)
+--     Snacks.rename.on_rename_file(event.data.from, event.data.to)
+--   end,
+-- })
 
 ----------------------------------------------------------------------------------
 -- LSP progress (indexing, loading the workspace, ...) as one notification
