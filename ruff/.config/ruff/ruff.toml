@@ -1,0 +1,26 @@
+# User-level ruff config (stowed to ~/.config/ruff/ruff.toml).
+# Used by the CLI, Nvim (lsp/ruff.lua) and VS Code (charliermarsh.ruff) for
+# any project without its own ruff config. A project's pyproject.toml
+# [tool.ruff] / ruff.toml replaces this file completely (no merging).
+# Rules: https://docs.astral.sh/ruff/rules/
+
+line-length = 88
+
+[lint]
+# Ruff's default is only E4, E7, E9, F (syntax errors, undefined names,
+# unused imports). These add the widely used, low-noise sets.
+extend-select = [
+  "I",    # isort: import order (also fixed by "Organize imports")
+  "UP",   # pyupgrade: newer syntax for the target Python (list[int], f-strings, ...)
+  "B",    # flake8-bugbear: likely bugs (mutable default args, loop closures, ...)
+  "SIM",  # flake8-simplify: simpler equivalents
+  "C4",   # flake8-comprehensions: better list/dict/set comprehensions
+  "PIE",  # flake8-pie: misc. unnecessary code
+  "RUF",  # ruff's own rules (unused noqa, mutable class defaults, ...)
+]
+ignore = [
+  "SIM108", # if/else -> ternary: often less readable
+]
+
+[format]
+docstring-code-format = true # also format code examples in docstrings

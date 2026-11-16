@@ -20,6 +20,7 @@ Every top-level directory is a [GNU Stow](https://www.gnu.org/software/stow/) pa
 | `wezterm` | `~/.config/wezterm/`         |
 | `kanata`  | `~/.config/kanata/`          |
 | `code`    | `~/.config/Code/User/`       |
+| `ruff`    | `~/.config/ruff/`            |
 
 `scripts/` holds helper scripts that are not linked anywhere.
 

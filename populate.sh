@@ -21,7 +21,7 @@ DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$DOTFILES_DIR"
 
 # Stow packages: each top-level directory mirrors $HOME
-STOW_PACKAGES=(zsh nvim tmux wezterm kanata code)
+STOW_PACKAGES=(zsh nvim tmux wezterm kanata code ruff)
 
 UPDATE=false
 [[ "$1" == "--update" ]] && UPDATE=true
@@ -416,6 +416,35 @@ elif $UPDATE; then
   echo -e "    ${GREEN}[+] VS Code $(code --version | head -n1) is up to date.${NC}"
 else
   echo -e "    ${GREEN}[+] VS Code $(code --version | head -n1) is already installed (updates via apt).${NC}"
+fi
+
+# Extensions the settings in code/.config/Code/User rely on.
+# ms-python.python also pulls in Pylance, which settings.json turns off
+# (python.languageServer = None) in favor of basedpyright.
+VSCODE_EXTENSIONS=(
+  vscodevim.vim          # vim motions
+  enkia.tokyo-night      # theme
+  ms-python.python       # interpreters, venvs, testing
+  ms-python.debugpy      # Python debugger
+  detachhead.basedpyright # type checker / language server (as in Nvim)
+  charliermarsh.ruff     # linter, formatter, import sorting (as in Nvim)
+)
+
+echo -e "${BLUE}[*] Checking VS Code extensions...${NC}"
+INSTALLED_EXTENSIONS=$(code --list-extensions)
+for ext in "${VSCODE_EXTENSIONS[@]}"; do
+  if grep -qix "$ext" <<<"$INSTALLED_EXTENSIONS"; then
+    echo -e "    ${GREEN}[+] $ext is already installed.${NC}"
+  else
+    echo -e "    [>] Installing $ext..."
+    code --install-extension "$ext" >/dev/null
+    echo -e "    ${GREEN}[+] $ext installed.${NC}"
+  fi
+done
+if $UPDATE; then
+  echo -e "    [>] Updating VS Code extensions..."
+  code --update-extensions >/dev/null
+  echo -e "    ${GREEN}[+] VS Code extensions are up to date.${NC}"
 fi
 
 # ===========================================================================

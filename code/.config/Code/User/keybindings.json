@@ -1,18 +1,35 @@
-// Place your key bindings in this file to override the defaults
+// VS Code keybindings (stowed to ~/.config/Code/User/keybindings.json).
+// Vim-mode keys (leader mappings etc.) are in settings.json under vim.*.
 [
-    {
-        "key": "ctrl+p",
-        "command": "selectPrevSuggestion",
-        "when": "suggestWidgetVisible && textInputFocus"
-    },
-    {
-        "key": "ctrl+n",
-        "command": "selectNextSuggestion",
-        "when": "suggestWidgetVisible && textInputFocus"
-    },
-    {
-        "key": "ctrl+y",
-        "command": "acceptSelectedSuggestion",
-        "when": "suggestWidgetVisible && textInputFocus"
-    }
+    // Completion menu: Ctrl+N/P select, Ctrl+Y accepts (like blink.cmp)
+    { "key": "ctrl+n", "command": "selectNextSuggestion", "when": "suggestWidgetVisible && textInputFocus" },
+    { "key": "ctrl+p", "command": "selectPrevSuggestion", "when": "suggestWidgetVisible && textInputFocus" },
+    { "key": "ctrl+y", "command": "acceptSelectedSuggestion", "when": "suggestWidgetVisible && textInputFocus" },
+
+    // Quick open / command palette: Ctrl+N/P move through the list
+    { "key": "ctrl+n", "command": "workbench.action.quickOpenSelectNext", "when": "inQuickOpen" },
+    { "key": "ctrl+p", "command": "workbench.action.quickOpenSelectPrevious", "when": "inQuickOpen" },
+
+    // Ctrl+H/J/K/L move between editor groups, sidebar, panel and terminal
+    // (like Nvim windows / tmux panes). Not in vim insert mode, where Ctrl+H
+    // is backspace. Ctrl+K here shadows the Ctrl+K chords outside insert mode.
+    { "key": "ctrl+h", "command": "workbench.action.navigateLeft", "when": "!suggestWidgetVisible && !inQuickOpen && (!editorTextFocus || vim.mode != 'Insert')" },
+    { "key": "ctrl+j", "command": "workbench.action.navigateDown", "when": "!suggestWidgetVisible && !inQuickOpen && (!editorTextFocus || vim.mode != 'Insert')" },
+    { "key": "ctrl+k", "command": "workbench.action.navigateUp", "when": "!suggestWidgetVisible && !inQuickOpen && (!editorTextFocus || vim.mode != 'Insert')" },
+    { "key": "ctrl+l", "command": "workbench.action.navigateRight", "when": "!suggestWidgetVisible && !inQuickOpen && (!editorTextFocus || vim.mode != 'Insert')" },
+
+    // File explorer with vim keys (when not renaming/typing a name)
+    { "key": "j", "command": "list.focusDown", "when": "filesExplorerFocus && !inputFocus" },
+    { "key": "k", "command": "list.focusUp", "when": "filesExplorerFocus && !inputFocus" },
+    { "key": "l", "command": "list.select", "when": "filesExplorerFocus && !inputFocus" },
+    { "key": "h", "command": "list.collapse", "when": "filesExplorerFocus && !inputFocus" },
+    { "key": "a", "command": "explorer.newFile", "when": "filesExplorerFocus && !inputFocus" },
+    { "key": "shift+a", "command": "explorer.newFolder", "when": "filesExplorerFocus && !inputFocus" },
+    { "key": "r", "command": "renameFile", "when": "filesExplorerFocus && !inputFocus" },
+    { "key": "d", "command": "deleteFile", "when": "filesExplorerFocus && !inputFocus" },
+    { "key": "y", "command": "filesExplorer.copy", "when": "filesExplorerFocus && !inputFocus" },
+    { "key": "x", "command": "filesExplorer.cut", "when": "filesExplorerFocus && !inputFocus" },
+    { "key": "p", "command": "filesExplorer.paste", "when": "filesExplorerFocus && !inputFocus" },
+    // - in the explorer goes back to the editor (- in the editor opens it)
+    { "key": "-", "command": "workbench.action.focusActiveEditorGroup", "when": "filesExplorerFocus && !inputFocus" }
 ]

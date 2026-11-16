@@ -15,7 +15,7 @@ DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$DOTFILES_DIR" || exit 1
 
 # Keep in sync with populate.sh
-STOW_PACKAGES=(zsh nvim tmux wezterm kanata code)
+STOW_PACKAGES=(zsh nvim tmux wezterm kanata code ruff)
 
 echo -e "${BLUE}==========================================${NC}"
 echo -e "${BLUE} [*] Tearing Down Environment Setup${NC}"

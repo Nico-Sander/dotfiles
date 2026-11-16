@@ -1,19 +1,229 @@
+// VS Code user settings (stowed to ~/.config/Code/User/settings.json).
+// Extensions are installed by populate.sh (VSCODE_EXTENSIONS).
+// Keys that mirror the Nvim config are noted with the matching Nvim option.
 {
+    // -----------------------------------------------------------------------
+    // Look
+    // -----------------------------------------------------------------------
+    "workbench.colorTheme": "Tokyo Night",
     "editor.fontFamily": "'JetBrains Mono', 'Ubuntu Mono', monospace",
-    "git.autofetch": true,
+    "editor.fontLigatures": true,
+    "editor.fontWeight": "500",
+    "editor.minimap.enabled": false,
+    "editor.lineNumbers": "relative",           // number + relativenumber
+    "editor.cursorSurroundingLines": 8,          // scrolloff
+    "editor.renderLineHighlight": "all",         // cursorline
+    "editor.renderWhitespace": "trailing",       // like mini.trailspace
+    "editor.stickyScroll.enabled": true,         // current class/def stays at the top
+    "editor.guides.bracketPairs": "active",
     "workbench.editor.empty.hint": "hidden",
     "workbench.secondarySideBar.defaultVisibility": "hidden",
-    "todo-tree.general.tags": [
-        "BUG",
-        "HACK",
-        "FIXME",
-        "TODO",
-        "XXX",
-        "[ ]",
-        "[x]",
-        "NOTE"
-    ],
+    "workbench.startupEditor": "none",
+    "breadcrumbs.enabled": true,
+
+    // -----------------------------------------------------------------------
+    // Editing
+    // -----------------------------------------------------------------------
+    "editor.tabSize": 2,                         // tabstop/shiftwidth (Python: 4, below)
+    "editor.insertSpaces": true,                 // expandtab
+    "editor.wordWrap": "on",                     // wrap + linebreak
+    "editor.wrappingIndent": "same",             // breakindent
+    "editor.wrapOnEscapedLineFeeds": true,
+    "editor.wrappingStrategy": "advanced",
+    "editor.smoothScrolling": true,
+    "editor.inlayHints.enabled": "onUnlessPressed", // hold Ctrl+Alt to hide them
+    "files.trimTrailingWhitespace": true,        // <leader>cf trims too
+    "files.trimFinalNewlines": true,
+    "files.insertFinalNewline": true,
+    "files.autoSave": "off",
+    "diffEditor.codeLens": true,
+    "git.autofetch": true,
     "security.workspace.trust.untrustedFiles": "open",
+
+    // Hidden in the explorer and in search
+    "files.exclude": {
+        "**/__pycache__": true,
+        "**/.pytest_cache": true,
+        "**/.ruff_cache": true,
+        "**/.mypy_cache": true
+    },
+    "search.exclude": {
+        "**/.venv": true
+    },
+
+    "[latex]": {
+        "editor.wordWrap": "bounded",
+        "editor.wordWrapColumn": 160
+    },
+
+    // -----------------------------------------------------------------------
+    // Vim (vscodevim.vim), mirrors nvim/.config/nvim/lua/config/keys.lua
+    // -----------------------------------------------------------------------
+    "vim.leader": "<space>",
+    "vim.useSystemClipboard": true,              // clipboard=unnamedplus
+    "vim.hlsearch": true,
+    "vim.incsearch": true,
+    "vim.ignorecase": true,
+    "vim.smartcase": true,
+    "vim.highlightedyank.enable": true,
+    "vim.highlightedyank.duration": 150,
+    "vim.foldfix": true,                         // j/k don't open folds
+    // Keys vim leaves to VS Code: Ctrl+P (quick open), Ctrl+H/J/K/L (window
+    // navigation, keybindings.json)
+    "vim.handleKeys": {
+        "<C-p>": false,
+        "<C-h>": false,
+        "<C-j>": false,
+        "<C-k>": false,
+        "<C-l>": false
+    },
+
+    "vim.normalModeKeyBindingsNonRecursive": [
+        // j/k move by screen line through wrapped lines
+        { "before": ["j"], "after": ["g", "j"] },
+        { "before": ["k"], "after": ["g", "k"] },
+        // ; opens the command line, : repeats the last f/t/F/T
+        { "before": [";"], "after": [":"] },
+        { "before": [":"], "after": [";"] },
+        // Esc also clears the search highlight
+        { "before": ["<Esc>"], "commands": [":nohl"] },
+        // x/X don't overwrite the clipboard, <leader>d deletes without it
+        { "before": ["x"], "after": ["\"", "_", "x"] },
+        { "before": ["X"], "after": ["\"", "_", "X"] },
+        { "before": ["<leader>", "d"], "after": ["\"", "_", "d"] },
+        // Keep the cursor centered when scrolling and searching
+        { "before": ["<C-d>"], "after": ["<C-d>", "z", "z"] },
+        { "before": ["<C-u>"], "after": ["<C-u>", "z", "z"] },
+        { "before": ["n"], "after": ["n", "z", "z", "z", "v"] },
+        { "before": ["N"], "after": ["N", "z", "z", "z", "v"] },
+        // kanata turns Ctrl+] / Ctrl+O into ß / ö
+        { "before": ["<leader>", "]"], "commands": ["editor.action.revealDefinition"] },
+        { "before": ["<leader>", "o"], "commands": ["workbench.action.navigateBack"] },
+
+        // LSP, same keys as the Nvim 0.12 defaults (:h lsp-defaults)
+        { "before": ["K"], "commands": ["editor.action.showHover"] },
+        { "before": ["g", "r", "n"], "commands": ["editor.action.rename"] },
+        { "before": ["g", "r", "a"], "commands": ["editor.action.quickFix"] },
+        { "before": ["g", "r", "r"], "commands": ["editor.action.goToReferences"] },
+        { "before": ["g", "r", "i"], "commands": ["editor.action.goToImplementation"] },
+        { "before": ["g", "r", "t"], "commands": ["editor.action.goToTypeDefinition"] },
+        { "before": ["g", "O"], "commands": ["workbench.action.gotoSymbol"] },
+        { "before": ["[", "d"], "commands": ["editor.action.marker.prev"] },
+        { "before": ["]", "d"], "commands": ["editor.action.marker.next"] },
+        { "before": ["<C-w>", "d"], "commands": ["editor.action.showHover"] },
+
+        // File explorer (mini.files in Nvim)
+        { "before": ["-"], "commands": ["workbench.files.action.showActiveFileInExplorer"] },
+        { "before": ["<leader>", "-"], "commands": ["workbench.view.explorer"] },
+
+        // Pickers (Snacks in Nvim)
+        { "before": ["<leader>", "f", "f"], "commands": ["workbench.action.quickOpen"] },
+        { "before": ["<leader>", "f", "b"], "commands": ["workbench.action.showAllEditorsByMostRecentlyUsed"] },
+        { "before": ["<leader>", "f", "g"], "commands": ["workbench.action.findInFiles"] },
+        { "before": ["<leader>", "/"], "commands": ["actions.find"] },
+        { "before": ["<leader>", "f", "d"], "commands": ["workbench.actions.view.problems"] },
+        { "before": ["<leader>", "f", "k"], "commands": ["workbench.action.openGlobalKeybindings"] },
+        { "before": ["<leader>", "f", "s"], "commands": ["workbench.action.showAllSymbols"] },
+        { "before": ["<leader>", "f", "c"], "commands": ["workbench.action.showCommands"] },
+
+        // Code
+        { "before": ["<leader>", "c", "f"], "commands": ["editor.action.formatDocument"] },
+        { "before": ["<leader>", "c", "t"], "commands": ["editor.action.trimTrailingWhitespace"] },
+        { "before": ["<leader>", "c", "x"], "commands": ["ruff.executeAutofix"] },
+
+        // Python
+        { "before": ["<leader>", "p", "i"], "commands": ["python.setInterpreter"] },
+        { "before": ["<leader>", "p", "r"], "commands": ["python.execInTerminal"] },
+        { "before": ["<leader>", "p", "t"], "commands": ["testing.runAtCursor"] },
+        { "before": ["<leader>", "p", "T"], "commands": ["testing.runCurrentFile"] },
+        { "before": ["<leader>", "p", "d"], "commands": ["testing.debugAtCursor"] },
+
+        // Debugging
+        { "before": ["<leader>", "b", "b"], "commands": ["editor.debug.action.toggleBreakpoint"] },
+        { "before": ["<leader>", "b", "c"], "commands": ["workbench.action.debug.continue"] },
+
+        // Git
+        { "before": ["]", "c"], "commands": ["workbench.action.editor.nextChange"] },
+        { "before": ["[", "c"], "commands": ["workbench.action.editor.previousChange"] },
+        { "before": ["<leader>", "g", "g"], "commands": ["workbench.view.scm"] },
+
+        // Panels
+        { "before": ["<leader>", "t"], "commands": ["workbench.action.terminal.toggleTerminal"] },
+        { "before": ["<leader>", "e"], "commands": ["workbench.action.toggleSidebarVisibility"] }
+    ],
+
+    "vim.visualModeKeyBindingsNonRecursive": [
+        { "before": ["j"], "after": ["g", "j"] },
+        { "before": ["k"], "after": ["g", "k"] },
+        { "before": [";"], "after": [":"] },
+        { "before": [":"], "after": [";"] },
+        { "before": ["<leader>", "d"], "after": ["\"", "_", "d"] },
+        // < and > keep the selection
+        { "before": ["<"], "commands": ["editor.action.outdentLines"] },
+        { "before": [">"], "commands": ["editor.action.indentLines"] },
+        // J/K move the selected lines
+        { "before": ["J"], "commands": ["editor.action.moveLinesDownAction"] },
+        { "before": ["K"], "commands": ["editor.action.moveLinesUpAction"] },
+        { "before": ["<leader>", "c", "f"], "commands": ["editor.action.formatSelection"] }
+    ],
+
+    // -----------------------------------------------------------------------
+    // Python: basedpyright for types, ruff for lint/format/imports.
+    // Same split and rules as nvim/.config/nvim/lsp/basedpyright.lua; ruff's
+    // rules are in ~/.config/ruff/ruff.toml (ruff package), shared with Nvim.
+    // A [tool.basedpyright] / [tool.ruff] section in pyproject.toml wins.
+    // -----------------------------------------------------------------------
+    "python.languageServer": "None",             // Pylance off, basedpyright instead
+    "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python", // uv venv
+    "python.terminal.activateEnvironment": true,
+    "python.testing.pytestEnabled": true,
+    "python.testing.unittestEnabled": false,
+
+    // "standard" = pyright's default checks: real type errors, no complaints
+    // about missing annotations or Any. basedpyright's own default
+    // ("recommended") is close to strict and floods untyped code.
+    "basedpyright.analysis.typeCheckingMode": "standard",
+    "basedpyright.disableOrganizeImports": true, // ruff does it
+    "basedpyright.analysis.diagnosticMode": "openFilesOnly",
+    "basedpyright.analysis.autoSearchPaths": true,
+    "basedpyright.analysis.autoImportCompletions": true,
+    // Inline types: inferred variable and return types, no parameter-name
+    // labels in calls (noisy)
+    "basedpyright.analysis.inlayHints.variableTypes": true,
+    "basedpyright.analysis.inlayHints.functionReturnTypes": true,
+    "basedpyright.analysis.inlayHints.callArgumentNames": false,
+    "basedpyright.analysis.diagnosticSeverityOverrides": {
+        // ruff reports these (F821, F811)
+        "reportUndefinedVariable": "none",
+        "reportRedeclaration": "none",
+        // Not in "standard", but useful
+        "reportDeprecated": "warning",           // calls to @deprecated functions
+        "reportUnnecessaryTypeIgnoreComment": "warning"
+    },
+
+    "[python]": {
+        "editor.tabSize": 4,
+        "editor.defaultFormatter": "charliermarsh.ruff",
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            // Sort imports on save. fixAll is left out on purpose: it would
+            // delete an import you just added before you use it. Run it with
+            // <leader>cx instead.
+            "source.organizeImports.ruff": "explicit"
+        },
+        "editor.rulers": [88]                    // ruff's line-length
+    },
+    "ruff.lint.enable": true,
+    "ruff.organizeImports": true,
+    "notebook.formatOnSave.enabled": true,
+    "notebook.codeActionsOnSave": {
+        "notebook.source.organizeImports": "explicit"
+    },
+
+    // -----------------------------------------------------------------------
+    // Other extensions and AI
+    // -----------------------------------------------------------------------
+    "todo-tree.general.tags": ["BUG", "HACK", "FIXME", "TODO", "XXX", "[ ]", "[x]", "NOTE"],
     "cSpell.minWordLength": 3,
     "cSpell.enabledSchemes": {
         "gist": false,
@@ -26,13 +236,7 @@
         "vscode-vfs": false,
         "vsls": false
     },
-    "cSpell.userWords": [
-        "BLE",
-        "devkitc",
-        "env"
-    ],
-    "editor.fontLigatures": true,
-    "editor.fontWeight": "500",
+    "cSpell.userWords": ["BLE", "devkitc", "env"],
     "github.copilot.enable": {
         "*": false,
         "plaintext": false,
@@ -43,42 +247,8 @@
     "inlineChat.lineNaturalLanguageHint": false,
     "geminicodeassist.project": "stellar-lodge-nfg2z",
     "geminicodeassist.inlineSuggestions.enableAuto": false,
-
-    "[latex]": {
-        "editor.wordWrap": "bounded",
-        "editor.wordWrapColumn": 160
-    },
-    "vim.normalModeKeyBindingsNonRecursive": [
-        {
-            "before": ["j"],
-            "after": ["g", "j"]
-        },
-        {
-            "before": ["k"],
-            "after": ["g", "k"]
-        }
-    ], 
-    "vim.visualModeKeyBindingsNonRecursive": [
-        {
-            "before": ["j"],
-            "after": ["g", "j"]
-        },
-        {
-            "before": ["k"],
-            "after": ["g", "k"]
-        }
-    ], 
-    
-    "vim.useSystemClipboard": true,
-    "editor.minimap.enabled": false,
-    "diffEditor.codeLens": true,
-    "editor.wordWrap": "on",
-    "editor.wrapOnEscapedLineFeeds": true,
-    "editor.wrappingStrategy": "advanced",
-    "editor.wordWrapColumn": 40,
     "chat.viewSessions.orientation": "stacked",
     "containers.containerClient": "com.microsoft.visualstudio.containers.docker",
     "containers.orchestratorClient": "com.microsoft.visualstudio.orchestrators.dockercompose",
-    "workbench.colorTheme": "Tokyo Night",
     "claudeCode.preferredLocation": "panel"
 }
