@@ -128,7 +128,7 @@ vim.api.nvim_create_autocmd("LspProgress", {
 
 ----------------------------------------------------------------------------------
 -- Per-buffer LSP setup: runs once for every client that attaches to a buffer
--- (Python buffers get two: basedpyright and ruff). Everything here is
+-- (Python buffers get two: ty and ruff). Everything here is
 -- buffer-local, so buffers without a server keep the default behavior.
 ----------------------------------------------------------------------------------
 vim.api.nvim_create_autocmd("LspAttach", {

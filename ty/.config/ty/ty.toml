@@ -1,0 +1,10 @@
+# User-level ty config (stowed to ~/.config/ty/ty.toml).
+# Used by the CLI (ty check) and Nvim (lsp/ty.lua). A project's
+# pyproject.toml [tool.ty] or ty.toml is merged on top: for single values
+# the project wins, lists are combined.
+# Rules and their default levels: https://docs.astral.sh/ty/reference/rules/
+#   (or: ty explain rule <name>)
+
+[rules]
+# Where ruff reports the same problem, ruff keeps it (it has quick fixes).
+unresolved-reference = "ignore" # ruff F821 (undefined name)

@@ -21,7 +21,7 @@ DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$DOTFILES_DIR"
 
 # Stow packages: each top-level directory mirrors $HOME
-STOW_PACKAGES=(zsh nvim tmux wezterm kanata code ruff)
+STOW_PACKAGES=(zsh nvim tmux wezterm kanata code ruff ty)
 
 UPDATE=false
 [[ "$1" == "--update" ]] && UPDATE=true
@@ -257,11 +257,12 @@ fi
 # ===========================================================================
 # uv installs Python CLI tools into isolated venvs under ~/.local/share/uv/tools
 # and links them into ~/.local/bin. Used for the Python language servers
-# (basedpyright brings its own Node, no system Node needed).
+# (ty for Nvim, basedpyright for VS Code and as Nvim fallback; basedpyright
+# brings its own Node, no system Node needed).
 # update with: ./populate.sh --update (uv itself and all tools)
 UV_BIN="$HOME/.local/bin/uv"
 UVX_BIN="$HOME/.local/bin/uvx"
-UV_TOOLS=(basedpyright ruff)
+UV_TOOLS=(basedpyright ruff ty)
 
 _install_latest_uv() {
   local arch

@@ -15,7 +15,7 @@ DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$DOTFILES_DIR" || exit 1
 
 # Keep in sync with populate.sh
-STOW_PACKAGES=(zsh nvim tmux wezterm kanata code ruff)
+STOW_PACKAGES=(zsh nvim tmux wezterm kanata code ruff ty)
 
 echo -e "${BLUE}==========================================${NC}"
 echo -e "${BLUE} [*] Tearing Down Environment Setup${NC}"
@@ -149,7 +149,7 @@ if [ -x "$UV_BIN" ]; then
 fi
 rm -f "$UV_BIN" "$HOME/.local/bin/uvx"
 rm -rf "${XDG_DATA_HOME:-$HOME/.local/share}/uv"
-echo -e "    ${GREEN}[+] uv, uvx and all uv tools (basedpyright, ruff, ...) removed.${NC}"
+echo -e "    ${GREEN}[+] uv, uvx and all uv tools (basedpyright, ruff, ty, ...) removed.${NC}"
 
 # ===========================================================================
 # Rust toolchain
