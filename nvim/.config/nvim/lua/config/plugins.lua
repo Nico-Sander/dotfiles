@@ -47,6 +47,7 @@ require("nvim-treesitter").install {
   "toml",
   "json",
   "yaml",
+  "sql",
 }
 
 ----------------------------------------------------------------------------------
@@ -266,6 +267,7 @@ require("blink.cmp").setup({
   },
   signature = { enabled = true },
 
+
   -- Completion config for Cmdline
   cmdline = {
     enabled = true,
@@ -290,31 +292,33 @@ end, {
   { name = "flex-e", path = "~/workspace/vaults/flex-e" },
 })
 
-if #obsidian_workspaces > 0 then require("obsidian").setup({
-  legacy_commands = false, -- only ":Obsidian <sub>", no ":ObsidianToday" etc.
-  workspaces = obsidian_workspaces,
+if #obsidian_workspaces > 0 then
+  require("obsidian").setup({
+    legacy_commands = false, -- only ":Obsidian <sub>", no ":ObsidianToday" etc.
+    workspaces = obsidian_workspaces,
 
-  -- :Obsidian new puts notes in inbox/ (vault rule: unsure where it goes -> inbox)
-  notes_subdir = "inbox",
-  new_notes_location = "notes_subdir",
-  -- File name from the title: "Load Duration Curve" -> load-duration-curve.md
-  note_id_func = require("obsidian.builtin").title_id,
+    -- :Obsidian new puts notes in inbox/ (vault rule: unsure where it goes -> inbox)
+    notes_subdir = "inbox",
+    new_notes_location = "notes_subdir",
+    -- File name from the title: "Load Duration Curve" -> load-duration-curve.md
+    note_id_func = require("obsidian.builtin").title_id,
 
-  -- The vault has its own frontmatter schema; never rewrite it on save
-  frontmatter = { enabled = false },
+    -- The vault has its own frontmatter schema; never rewrite it on save
+    frontmatter = { enabled = false },
 
-  templates = {
-    folder = "00-meta/templates", -- {{date}} and {{title}} are filled in
-    date_format = "YYYY-MM-DD",
-  },
-  daily_notes = {
-    folder = "07-journal",
-    date_format = "YYYY-MM-DD",
-    template = "daily.md",
-    default_tags = {},
-  },
-  attachments = { folder = "attachments" },
+    templates = {
+      folder = "00-meta/templates", -- {{date}} and {{title}} are filled in
+      date_format = "YYYY-MM-DD",
+    },
+    daily_notes = {
+      folder = "07-journal",
+      date_format = "YYYY-MM-DD",
+      template = "daily.md",
+      default_tags = {},
+    },
+    attachments = { folder = "attachments" },
 
-  picker = { name = "snacks.picker" },
-  completion = { min_chars = 1 }, -- suggest notes after [[ plus one letter
-}) end
+    picker = { name = "snacks.picker" },
+    completion = { min_chars = 1 }, -- suggest notes after [[ plus one letter
+  })
+end

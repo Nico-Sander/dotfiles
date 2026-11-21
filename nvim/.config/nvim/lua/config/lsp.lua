@@ -10,6 +10,7 @@ vim.lsp.enable({
   "ruff",
   "rust_analyzer",
   "bashls",
+  "sqruff",
 })
 
 -- How diagnostics (errors, warnings, ... from LSP and other sources) are
